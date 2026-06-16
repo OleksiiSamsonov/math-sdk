@@ -34,6 +34,10 @@ export default function App() {
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
+  const isBigWin = lastMultiplier >= 3 && lastWin > 0 && !isSpinning;
+  const isMegaWin = lastMultiplier >= 4 && lastWin > 0 && !isSpinning;
+  const winLevelText = isMegaWin ? "MEGA WIN" : "BIG WIN";
+
   async function handleSpin() {
   if (isSpinning) {
     return;
@@ -274,6 +278,15 @@ export default function App() {
           </div>
 
           {apiError && <div className="api-error">{apiError}</div>}
+          {isBigWin && (
+          <div className={`big-win-overlay ${isMegaWin ? "mega-win-overlay" : ""}`}>
+          <div className="big-win-card">
+          <span>{winLevelText}</span>
+          <strong>{lastWin.toFixed(2)}</strong>
+          <small>{lastMultiplier.toFixed(2)}x multiplier</small>
+          </div>
+          </div>
+        )}
         </section>
       </section>
 
