@@ -1455,3 +1455,187 @@ h1 {
 .paytable-note {
   margin-top: 14px;
 }
+.metric.bonus {
+  border-color: rgba(126, 231, 135, 0.28);
+  background:
+    radial-gradient(circle at top right, rgba(126, 231, 135, 0.12), transparent 52%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.metric.bonus strong {
+  color: #8dff9a;
+  text-shadow: 0 0 14px rgba(126, 231, 135, 0.55);
+}
+
+.bonus-trigger-banner {
+  margin-bottom: 14px;
+  padding: 14px 18px;
+  border: 1px solid rgba(126, 231, 135, 0.42);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at center, rgba(126, 231, 135, 0.22), transparent 58%),
+    linear-gradient(135deg, rgba(38, 130, 71, 0.28), rgba(10, 16, 24, 0.86));
+  box-shadow:
+    0 0 28px rgba(126, 231, 135, 0.28),
+    inset 0 0 16px rgba(255, 255, 255, 0.08);
+  text-align: center;
+  animation: bonusTriggerPop 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bonus-trigger-banner span {
+  display: block;
+  color: #baffc1;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.bonus-trigger-banner strong {
+  display: block;
+  margin-top: 4px;
+  color: #ffffff;
+  font-size: 26px;
+  line-height: 1;
+  text-shadow:
+    0 0 14px rgba(255, 255, 255, 0.75),
+    0 0 26px rgba(126, 231, 135, 0.75);
+}
+
+.bonus-trigger-banner small {
+  display: block;
+  margin-top: 7px;
+  color: rgba(220, 255, 224, 0.75);
+  font-weight: 800;
+}
+
+@keyframes bonusTriggerPop {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.94);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.bonus-test-button {
+  border-color: rgba(126, 231, 135, 0.38);
+  background:
+    radial-gradient(circle at top right, rgba(126, 231, 135, 0.16), transparent 55%),
+    rgba(126, 231, 135, 0.08);
+  color: #c7ffcf;
+}
+
+.bonus-test-button:hover {
+  border-color: rgba(126, 231, 135, 0.72);
+  background:
+    radial-gradient(circle at top right, rgba(126, 231, 135, 0.24), transparent 55%),
+    rgba(126, 231, 135, 0.13);
+}
+.free-spins-active-banner {
+  margin-bottom: 14px;
+  padding: 16px 20px;
+  border: 1px solid rgba(126, 231, 135, 0.5);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at center, rgba(126, 231, 135, 0.22), transparent 58%),
+    linear-gradient(135deg, rgba(22, 87, 47, 0.38), rgba(10, 16, 24, 0.92));
+  box-shadow:
+    0 0 34px rgba(126, 231, 135, 0.24),
+    inset 0 0 18px rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.free-spins-active-banner span {
+  display: block;
+  color: #baffc1;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.free-spins-active-banner strong {
+  display: block;
+  margin-top: 5px;
+  color: #ffffff;
+  font-size: 30px;
+  line-height: 1;
+  text-shadow:
+    0 0 12px rgba(255, 255, 255, 0.65),
+    0 0 24px rgba(126, 231, 135, 0.62);
+}
+
+.free-spins-active-banner small {
+  display: block;
+  margin-top: 8px;
+  color: rgba(220, 255, 224, 0.82);
+  font-weight: 800;
+}
+
+.slot-machine.free-spins-mode {
+  border-color: rgba(126, 231, 135, 0.34);
+  box-shadow:
+    0 0 0 1px rgba(126, 231, 135, 0.16),
+    0 0 36px rgba(126, 231, 135, 0.12);
+}
+
+.spin-button.free-spin-button {
+  border: 1px solid rgba(126, 231, 135, 0.52);
+  background:
+    radial-gradient(circle at top right, rgba(126, 231, 135, 0.24), transparent 52%),
+    linear-gradient(135deg, #1f7c46, #10391f);
+  color: #ffffff;
+  box-shadow: 0 0 26px rgba(126, 231, 135, 0.28);
+}
+.free-spins-active-banner {
+  display: none;
+}
+
+.free-spins-compact-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 12px;
+  padding: 10px 16px;
+  border: 1px solid rgba(126, 231, 135, 0.42);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at center, rgba(126, 231, 135, 0.16), transparent 62%),
+    linear-gradient(135deg, rgba(22, 87, 47, 0.28), rgba(10, 16, 24, 0.88));
+  box-shadow:
+    0 0 22px rgba(126, 231, 135, 0.16),
+    inset 0 0 12px rgba(255, 255, 255, 0.05);
+}
+
+.free-spins-compact-bar span {
+  color: #baffc1;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.free-spins-compact-bar strong {
+  color: #ffffff;
+  font-size: 19px;
+  line-height: 1;
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.5),
+    0 0 18px rgba(126, 231, 135, 0.55);
+}
+
+.free-spins-compact-bar small {
+  color: rgba(220, 255, 224, 0.82);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}

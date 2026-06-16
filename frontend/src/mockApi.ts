@@ -3,6 +3,7 @@ import type { SpinResult } from "./gameEngine";
 export type SpinRequest = {
   bet: number;
   balance: number;
+  isFreeSpin?: boolean;
 };
 
 export type SpinResponse = {

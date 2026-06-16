@@ -45,6 +45,9 @@ export type BoardEvaluation = {
   winningLines: number[];
   winningCells: Set<string>;
   lineWins: LineWin[];
+  scatterCount: number;
+  freeSpinsAwarded: number;
+  winMultiplier: number;
 };
 
 export type SpinResult = {
@@ -275,6 +278,7 @@ export const WEIGHTED_REEL: SymbolCode[] = [
   "W",
 
   "S",
+  "S",
 ];
 
 export const PAYLINES: number[][] = [
@@ -391,9 +395,32 @@ export function evaluateLine(
     cells: line.slice(0, count).map((rowIndex, reelIndex) => `${rowIndex}-${reelIndex}`),
   };
 }
+export function countScatters(board: SymbolCode[][]): number {
+  return board.flat().filter((symbol) => symbol === "S").length;
+}
 
-export function evaluateBoard(board: SymbolCode[][], bet: number): BoardEvaluation {
-  let totalMultiplier = 0;
+export function getFreeSpinsAwarded(scatterCount: number): number {
+  if (scatterCount >= 5) {
+    return 20;
+  }
+
+  if (scatterCount === 4) {
+    return 12;
+  }
+
+  if (scatterCount === 3) {
+    return 8;
+  }
+
+  return 0;
+}
+
+export function evaluateBoard(
+  board: SymbolCode[][],
+  bet: number,
+  winMultiplier = 1
+): BoardEvaluation {
+  let baseMultiplier = 0;
   const lineWins: LineWin[] = [];
   const winningCells = new Set<string>();
 
@@ -402,11 +429,15 @@ export function evaluateBoard(board: SymbolCode[][], bet: number): BoardEvaluati
     const result = evaluateLine(lineSymbols, line, lineIndex + 1);
 
     if (result) {
-      totalMultiplier += result.payout;
+      baseMultiplier += result.payout;
       lineWins.push(result);
       result.cells.forEach((cell) => winningCells.add(cell));
     }
   });
+
+  const scatterCount = countScatters(board);
+  const freeSpinsAwarded = getFreeSpinsAwarded(scatterCount);
+  const totalMultiplier = Number((baseMultiplier * winMultiplier).toFixed(2));
 
   return {
     totalMultiplier,
@@ -414,6 +445,9 @@ export function evaluateBoard(board: SymbolCode[][], bet: number): BoardEvaluati
     winningLines: lineWins.map((win) => win.lineNumber),
     winningCells,
     lineWins,
+    scatterCount,
+    freeSpinsAwarded,
+    winMultiplier,
   };
 }
 
