@@ -1649,3 +1649,172 @@ h1 {
 .bonus-test-button:hover {
   opacity: 1;
 }
+.bonus-intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at center, rgba(126, 231, 135, 0.18), transparent 42%),
+    rgba(2, 6, 12, 0.82);
+  backdrop-filter: blur(10px);
+  animation: bonusIntroFadeIn 0.22s ease-out both;
+}
+
+.bonus-intro-card {
+  position: relative;
+  width: min(520px, 100%);
+  overflow: hidden;
+  padding: 34px 32px 30px;
+  border: 1px solid rgba(126, 231, 135, 0.52);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top, rgba(126, 231, 135, 0.2), transparent 44%),
+    linear-gradient(145deg, rgba(19, 76, 41, 0.92), rgba(8, 12, 20, 0.97));
+  box-shadow:
+    0 0 55px rgba(126, 231, 135, 0.26),
+    inset 0 0 24px rgba(255, 255, 255, 0.07);
+  text-align: center;
+  animation: bonusIntroPop 0.34s cubic-bezier(0.2, 1.15, 0.2, 1) both;
+}
+
+.bonus-intro-glow {
+  position: absolute;
+  inset: -80px;
+  background:
+    conic-gradient(
+      from 0deg,
+      transparent,
+      rgba(126, 231, 135, 0.18),
+      transparent,
+      rgba(255, 218, 121, 0.14),
+      transparent
+    );
+  animation: bonusIntroRotate 5s linear infinite;
+  opacity: 0.72;
+}
+
+.bonus-intro-label,
+.bonus-intro-title,
+.bonus-intro-text,
+.bonus-intro-features,
+.bonus-intro-button {
+  position: relative;
+  z-index: 1;
+}
+
+.bonus-intro-label {
+  display: block;
+  color: #baffc1;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.bonus-intro-title {
+  display: block;
+  margin-top: 10px;
+  color: #ffffff;
+  font-size: clamp(38px, 7vw, 64px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 14px rgba(255, 255, 255, 0.72),
+    0 0 30px rgba(126, 231, 135, 0.72);
+}
+
+.bonus-intro-text {
+  position: relative;
+  z-index: 1;
+  max-width: 390px;
+  margin: 18px auto 0;
+  color: rgba(230, 255, 234, 0.82);
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.bonus-intro-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.bonus-intro-features div {
+  padding: 12px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.bonus-intro-features span {
+  display: block;
+  color: rgba(220, 255, 224, 0.62);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bonus-intro-features strong {
+  display: block;
+  margin-top: 4px;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.bonus-intro-button {
+  margin-top: 24px;
+  width: 100%;
+  padding: 16px 20px;
+  border: 0;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.25), transparent 48%),
+    linear-gradient(135deg, #7ee787, #2fb05a);
+  color: #06100a;
+  font-size: 15px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(126, 231, 135, 0.32);
+}
+
+.bonus-intro-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+@keyframes bonusIntroFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bonusIntroPop {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes bonusIntroRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}

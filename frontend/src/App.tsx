@@ -34,6 +34,7 @@ export default function App() {
   const [stoppedReels, setStoppedReels] = useState<Set<number>>(new Set());
   const [freeSpinsLeft, setFreeSpinsLeft] = useState(0);
   const [lastFreeSpinsAwarded, setLastFreeSpinsAwarded] = useState(0);
+  const [showBonusIntro, setShowBonusIntro] = useState(false);
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
@@ -164,6 +165,9 @@ export default function App() {
     : response.balanceAfterWin
 );
     setLastFreeSpinsAwarded(awardedFreeSpins);
+    if (awardedFreeSpins > 0) {
+  setShowBonusIntro(true);
+}
 
     setFreeSpinsLeft((currentFreeSpinsLeft) => {
       const safeCurrentFreeSpinsLeft = Number.isFinite(currentFreeSpinsLeft)
@@ -220,6 +224,7 @@ export default function App() {
     setApiError("");
     setFreeSpinsLeft(0);
     setLastFreeSpinsAwarded(0);
+    setShowBonusIntro(false);
   }
 
   function handleForceBonus() {
@@ -236,6 +241,7 @@ export default function App() {
       return safeCurrentFreeSpinsLeft + 8;
     });
     setLastFreeSpinsAwarded(8);
+    setShowBonusIntro(true);
   }
 
   return (
@@ -489,6 +495,47 @@ export default function App() {
           </section>
         </div>
       )}
+      {showBonusIntro && (
+  <div className="bonus-intro-overlay">
+    <div className="bonus-intro-card">
+      <div className="bonus-intro-glow" />
+
+      <span className="bonus-intro-label">Scatter Bonus</span>
+
+      <strong className="bonus-intro-title">
+        {lastFreeSpinsAwarded > 0 ? lastFreeSpinsAwarded : safeFreeSpinsLeft} Free Spins
+      </strong>
+
+      <p className="bonus-intro-text">
+        Bonus mode activated. All Free Spins wins pay with a x2 multiplier.
+      </p>
+
+      <div className="bonus-intro-features">
+        <div>
+          <span>Mode</span>
+          <strong>Free Spins</strong>
+        </div>
+
+        <div>
+          <span>Multiplier</span>
+          <strong>x2 Wins</strong>
+        </div>
+
+        <div>
+          <span>Bet Cost</span>
+          <strong>Free</strong>
+        </div>
+      </div>
+
+      <button
+        className="bonus-intro-button"
+        onClick={() => setShowBonusIntro(false)}
+      >
+        Start Free Spins
+      </button>
+    </div>
+  </div>
+)}
     </main>
   );
 }
