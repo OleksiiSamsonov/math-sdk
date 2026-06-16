@@ -71,8 +71,8 @@ export default function App() {
   const isFreeSpinMode = freeSpinsLeft > 0;
   const safeFreeSpinsLeft = Number.isFinite(freeSpinsLeft) ? freeSpinsLeft : 0;
 
-  const isBigWin = lastMultiplier >= 3 && lastWin > 0 && !isSpinning;
-  const isMegaWin = lastMultiplier >= 5 && lastWin > 0 && !isSpinning;
+  const isBigWin = lastMultiplier >= 10 && lastWin > 0 && !isSpinning;
+  const isMegaWin = lastMultiplier >= 25 && lastWin > 0 && !isSpinning;
   const winLevelText = isMegaWin ? "MEGA WIN" : "BIG WIN";
 
   async function handleSpin() {
@@ -297,7 +297,7 @@ export default function App() {
           </button>
 
           <button className="secondary-button bonus-test-button" onClick={handleForceBonus}>
-            Force Bonus
+            Dev: Force Bonus
           </button>
         </aside>
 
@@ -307,7 +307,7 @@ export default function App() {
               <span>20 Fixed Paylines</span>
               <strong>5 Reels × 3 Rows</strong>
             </div>
-            <div className="rtp-badge">RTP ≈ 94–95%</div>
+            <div className="rtp-badge">RTP ≈ 94%</div>
           </div>
 
           <div

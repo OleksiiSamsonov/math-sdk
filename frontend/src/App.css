@@ -1639,3 +1639,13 @@ h1 {
   font-weight: 850;
   text-transform: uppercase;
 }
+.bonus-test-button {
+  opacity: 0.62;
+  border-style: dashed;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.bonus-test-button:hover {
+  opacity: 1;
+}
