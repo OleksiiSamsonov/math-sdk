@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import {
   DEFAULT_BOARD,
@@ -22,6 +22,7 @@ export default function App() {
   const [bet, setBet] = useState(1);
   const [balance, setBalance] = useState(1000);
   const [lastWin, setLastWin] = useState(0);
+  const [displayedWin, setDisplayedWin] = useState(0);
   const [lastMultiplier, setLastMultiplier] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinCount, setSpinCount] = useState(0);
@@ -33,6 +34,36 @@ export default function App() {
   const [stoppedReels, setStoppedReels] = useState<Set<number>>(new Set());
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
+  useEffect(() => {
+  if (lastWin <= 0 || isSpinning) {
+    setDisplayedWin(0);
+    return;
+  }
+
+  const duration = lastMultiplier >= 5 ? 1300 : 800;
+  const startTime = window.performance.now();
+  let animationFrame = 0;
+
+  function animate(currentTime: number) {
+    const progress = Math.min((currentTime - startTime) / duration, 1);
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+    const nextValue = Number((lastWin * easedProgress).toFixed(2));
+
+    setDisplayedWin(nextValue);
+
+    if (progress < 1) {
+      animationFrame = window.requestAnimationFrame(animate);
+    } else {
+      setDisplayedWin(lastWin);
+    }
+  }
+
+  animationFrame = window.requestAnimationFrame(animate);
+
+  return () => {
+    window.cancelAnimationFrame(animationFrame);
+  };
+}, [lastWin, lastMultiplier, isSpinning]);
 
   const isBigWin = lastMultiplier >= 3 && lastWin > 0 && !isSpinning;
   const isMegaWin = lastMultiplier >= 4 && lastWin > 0 && !isSpinning;
@@ -52,6 +83,7 @@ export default function App() {
   setIsSpinning(true);
   setStoppedReels(new Set());
   setLastWin(0);
+  setDisplayedWin(0);
   setLastMultiplier(0);
   setWinningLines([]);
   setWinningCells(new Set());
@@ -152,6 +184,7 @@ export default function App() {
 
     setBalance(1000);
     setLastWin(0);
+    setDisplayedWin(0);
     setLastMultiplier(0);
     setSpinCount(0);
     setWinningLines([]);
@@ -194,7 +227,7 @@ export default function App() {
 
           <div className="metric win">
             <span>Last Win</span>
-            <strong>{lastWin.toFixed(2)}</strong>
+            <strong>{displayedWin.toFixed(2)}</strong>
           </div>
 
           <div className="metric">
@@ -223,7 +256,7 @@ export default function App() {
           {lastWin > 0 && !isSpinning && (
             <div className="win-banner">
               <span>Win</span>
-              <strong>{lastWin.toFixed(2)}</strong>
+              <strong>{displayedWin.toFixed(2)}</strong>
               <small>{lastMultiplier.toFixed(2)}x multiplier</small>
             </div>
           )}
@@ -282,7 +315,7 @@ export default function App() {
           <div className={`big-win-overlay ${isMegaWin ? "mega-win-overlay" : ""}`}>
           <div className="big-win-card">
           <span>{winLevelText}</span>
-          <strong>{lastWin.toFixed(2)}</strong>
+          <strong>{displayedWin.toFixed(2)}</strong>
           <small>{lastMultiplier.toFixed(2)}x multiplier</small>
           </div>
           </div>
