@@ -766,3 +766,73 @@ h1 {
       0 0 70px rgba(255, 112, 67, 0.65);
   }
 }
+.coin-burst {
+  position: absolute;
+  inset: 0;
+  z-index: 21;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.coin-particle {
+  --coin-angle: 0deg;
+  --coin-distance: 140px;
+  --coin-delay: 0s;
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 24px;
+  opacity: 0;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--coin-angle))
+    translateX(0)
+    rotate(calc(var(--coin-angle) * -1))
+    scale(0.4);
+  filter: drop-shadow(0 0 10px rgba(255, 214, 90, 0.85));
+  animation: coinBurstFly 1.45s cubic-bezier(0.16, 1, 0.3, 1) var(--coin-delay) forwards;
+}
+
+.mega-win-overlay .coin-particle {
+  font-size: 30px;
+  animation-duration: 1.85s;
+}
+
+@keyframes coinBurstFly {
+  0% {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--coin-angle))
+      translateX(0)
+      rotate(calc(var(--coin-angle) * -1))
+      scale(0.25);
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  58% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--coin-angle))
+      translateX(var(--coin-distance))
+      rotate(calc(var(--coin-angle) * -1))
+      scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--coin-angle))
+      translateX(calc(var(--coin-distance) * 1.12))
+      rotate(calc(var(--coin-angle) * -1))
+      translateY(48px)
+      scale(0.65);
+  }
+}

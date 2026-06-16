@@ -312,14 +312,33 @@ export default function App() {
 
           {apiError && <div className="api-error">{apiError}</div>}
           {isBigWin && (
-          <div className={`big-win-overlay ${isMegaWin ? "mega-win-overlay" : ""}`}>
-          <div className="big-win-card">
-          <span>{winLevelText}</span>
-          <strong>{displayedWin.toFixed(2)}</strong>
-          <small>{lastMultiplier.toFixed(2)}x multiplier</small>
-          </div>
-          </div>
-        )}
+  <div className={`big-win-overlay ${isMegaWin ? "mega-win-overlay" : ""}`}>
+    <div className="coin-burst" aria-hidden="true">
+      {Array.from({ length: isMegaWin ? 28 : 18 }).map((_, index) => (
+        <span
+          className="coin-particle"
+          key={index}
+          style={
+            {
+              "--coin-index": index,
+              "--coin-angle": `${(360 / (isMegaWin ? 28 : 18)) * index}deg`,
+              "--coin-distance": `${isMegaWin ? 170 + (index % 5) * 18 : 120 + (index % 4) * 16}px`,
+              "--coin-delay": `${(index % 7) * 0.035}s`,
+            } as React.CSSProperties
+          }
+        >
+          🪙
+        </span>
+      ))}
+    </div>
+
+    <div className="big-win-card">
+      <span>{winLevelText}</span>
+      <strong>{displayedWin.toFixed(2)}</strong>
+      <small>{lastMultiplier.toFixed(2)}x multiplier</small>
+    </div>
+  </div>
+)}
         </section>
       </section>
 
