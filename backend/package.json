@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx src/server.ts",
     "build": "tsc",
-    "start": "node dist/backend/src/server.js"
+    "start": "node dist/backend/src/server.js",
+    "simulate": "tsx src/simulate.ts"
   },
   "keywords": [],
   "author": "",
