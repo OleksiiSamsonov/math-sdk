@@ -23,71 +23,76 @@ export default function App() {
   const [winningLines, setWinningLines] = useState<number[]>([]);
   const [winningCells, setWinningCells] = useState<Set<string>>(new Set());
   const [spinHistory, setSpinHistory] = useState<SpinHistoryItem[]>([]);
+  const [apiError, setApiError] = useState("");
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
-async function handleSpin() {
-  if (isSpinning || balance < bet) {
-    return;
-  }
-
-  setIsSpinning(true);
-  setLastWin(0);
-  setLastMultiplier(0);
-  setWinningLines([]);
-  setWinningCells(new Set());
-
-  const spinFrames = 12;
-  let currentFrame = 0;
-
-  const animationInterval = window.setInterval(() => {
-    setBoard(createRandomBoard());
-    currentFrame += 1;
-
-    if (currentFrame >= spinFrames) {
-      window.clearInterval(animationInterval);
+  async function handleSpin() {
+    if (isSpinning || balance < bet) {
+      setApiError("Insufficient balance.");
+      return;
     }
-  }, 70);
 
-  const response = await requestSpin({
-    bet,
-    balance,
-  });
+    setApiError("");
+    setIsSpinning(true);
+    setLastWin(0);
+    setLastMultiplier(0);
+    setWinningLines([]);
+    setWinningCells(new Set());
 
-  window.clearInterval(animationInterval);
+    const spinFrames = 12;
+    let currentFrame = 0;
 
-  if (!response.success) {
-    setIsSpinning(false);
-    return;
-  }
+    const animationInterval = window.setInterval(() => {
+      setBoard(createRandomBoard());
+      currentFrame += 1;
 
-  const nextSpinCount = spinCount + 1;
+      if (currentFrame >= spinFrames) {
+        window.clearInterval(animationInterval);
+      }
+    }, 70);
 
-  setBoard(response.result.board);
-  setLastWin(response.result.evaluation.totalWin);
-  setLastMultiplier(response.result.evaluation.totalMultiplier);
-  setWinningLines(response.result.evaluation.winningLines);
-  setWinningCells(response.result.evaluation.winningCells);
-  setBalance(response.balanceAfterWin);
-  setSpinCount(nextSpinCount);
-  setSpinHistory((currentHistory) => [
-    {
-      id: nextSpinCount,
+    const response = await requestSpin({
       bet,
-      win: response.result.evaluation.totalWin,
-      multiplier: response.result.evaluation.totalMultiplier,
-      lines: response.result.evaluation.winningLines,
-    },
-    ...currentHistory,
-  ].slice(0, 5));
-  setIsSpinning(false);
-}
+      balance,
+    });
+
+    window.clearInterval(animationInterval);
+
+    if (!response.success) {
+      setApiError(response.message);
+      setIsSpinning(false);
+      return;
+    }
+
+    const nextSpinCount = spinCount + 1;
+
+    setBoard(response.result.board);
+    setLastWin(response.result.evaluation.totalWin);
+    setLastMultiplier(response.result.evaluation.totalMultiplier);
+    setWinningLines(response.result.evaluation.winningLines);
+    setWinningCells(response.result.evaluation.winningCells);
+    setBalance(response.balanceAfterWin);
+    setSpinCount(nextSpinCount);
+    setSpinHistory((currentHistory) => [
+      {
+        id: nextSpinCount,
+        bet,
+        win: response.result.evaluation.totalWin,
+        multiplier: response.result.evaluation.totalMultiplier,
+        lines: response.result.evaluation.winningLines,
+      },
+      ...currentHistory,
+    ].slice(0, 5));
+    setIsSpinning(false);
+  }
 
   function handleBetChange(nextBet: number) {
     if (isSpinning) {
       return;
     }
 
+    setApiError("");
     setBet(nextBet);
   }
 
@@ -104,23 +109,25 @@ async function handleSpin() {
     setWinningCells(new Set());
     setSpinHistory([]);
     setBoard(DEFAULT_BOARD);
+    setApiError("");
   }
 
   return (
     <main className="app-shell">
       <section className="hero-panel">
         <div>
-          <p className="eyebrow">Gold Rush Lines v0.3</p>
+          <p className="eyebrow">Gold Rush Lines v0.4</p>
           <h1>Gold Rush Lines</h1>
           <p className="subtitle">
-            Classic 5×3 video slot prototype with 20 paylines, Wild Gold, highlighted wins, and a separated mock game engine.
+            Classic 5×3 video slot prototype with 20 paylines, Wild Gold, highlighted wins,
+            separated mock game engine, and mock API spin flow.
           </p>
         </div>
 
         <div className="status-card">
           <span>Mode</span>
           <strong>Base Game</strong>
-          <small>Mock engine connected · Free Spins disabled</small>
+          <small>Mock API connected · Free Spins disabled</small>
         </div>
       </section>
 
@@ -205,7 +212,7 @@ async function handleSpin() {
               ))}
             </div>
 
-            <button className="spin-button" onClick={handleSpin} disabled={isSpinning || balance < bet}>
+            <button className="spin-button" onClick={handleSpin} disabled={isSpinning}>
               {isSpinning ? "Spinning..." : "Spin"}
             </button>
           </div>
@@ -216,6 +223,8 @@ async function handleSpin() {
               Winning Lines: {winningLines.length > 0 ? winningLines.join(", ") : "None"}
             </span>
           </div>
+
+          {apiError && <div className="api-error">{apiError}</div>}
         </section>
       </section>
 
