@@ -364,28 +364,45 @@ export default function App() {
       </section>
 
       {showPaytable && (
-        <section className="paytable-panel">
+  <div className="paytable-modal-backdrop" onClick={() => setShowPaytable(false)}>
+    <section className="paytable-modal" onClick={(event) => event.stopPropagation()}>
+      <div className="paytable-modal-header">
+        <div>
+          <span>Gold Rush Lines</span>
           <h2>Paytable</h2>
-          <div className="paytable-grid">
-            <div className="paytable-header">Symbol</div>
-            <div className="paytable-header">3</div>
-            <div className="paytable-header">4</div>
-            <div className="paytable-header">5</div>
+        </div>
 
-            {PAYTABLE.map((entry) => (
-              <div className="paytable-row" key={entry.symbol}>
-                <div className="paytable-symbol">
-                  <img className="paytable-symbol-image" src={entry.image} alt={entry.name} />
-                  <strong>{entry.name}</strong>
-                </div>
-                <div>{entry.three ? `${entry.three}x` : "-"}</div>
-                <div>{entry.four ? `${entry.four}x` : "-"}</div>
-                <div>{entry.five ? `${entry.five}x` : "-"}</div>
-              </div>
-            ))}
+        <button className="paytable-close-button" onClick={() => setShowPaytable(false)}>
+          ×
+        </button>
+      </div>
+
+      <div className="paytable-modal-grid">
+        <div className="paytable-modal-head">Symbol</div>
+        <div className="paytable-modal-head">3</div>
+        <div className="paytable-modal-head">4</div>
+        <div className="paytable-modal-head">5</div>
+
+        {PAYTABLE.map((entry) => (
+          <div className="paytable-modal-row" key={entry.symbol}>
+            <div className="paytable-modal-symbol">
+              <img className="paytable-modal-image" src={entry.image} alt={entry.name} />
+              <strong>{entry.name}</strong>
+            </div>
+
+            <div className="paytable-modal-value">{entry.three ? `${entry.three}x` : "—"}</div>
+            <div className="paytable-modal-value">{entry.four ? `${entry.four}x` : "—"}</div>
+            <div className="paytable-modal-value">{entry.five ? `${entry.five}x` : "—"}</div>
           </div>
-        </section>
-      )}
+        ))}
+      </div>
+
+      <p className="paytable-note">
+        Pays are shown as bet multipliers. Wild substitutes for all paying symbols except Scatter.
+      </p>
+    </section>
+  </div>
+)}
     </main>
   );
 }
