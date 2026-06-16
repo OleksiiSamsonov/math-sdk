@@ -30,6 +30,7 @@ export default function App() {
   const [winningCells, setWinningCells] = useState<Set<string>>(new Set());
   const [spinHistory, setSpinHistory] = useState<SpinHistoryItem[]>([]);
   const [apiError, setApiError] = useState("");
+  const [stoppedReels, setStoppedReels] = useState<Set<number>>(new Set());
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
@@ -45,42 +46,69 @@ export default function App() {
 
   setApiError("");
   setIsSpinning(true);
+  setStoppedReels(new Set());
   setLastWin(0);
   setLastMultiplier(0);
   setWinningLines([]);
   setWinningCells(new Set());
 
-  const spinFrames = 18;
-  let currentFrame = 0;
-
-  const animationInterval = window.setInterval(() => {
-    setBoard(createRandomBoard());
-    currentFrame += 1;
-
-    if (currentFrame >= spinFrames) {
-      currentFrame = 0;
-    }
-  }, 65);
-
-  const [response] = await Promise.all([
-    requestSpin({
-      bet,
-      balance,
-    }),
-    wait(1200),
-  ]);
-
-  window.clearInterval(animationInterval);
+  const response = await requestSpin({
+    bet,
+    balance,
+  });
 
   if (!response.success) {
     setApiError(response.message);
     setIsSpinning(false);
+    setStoppedReels(new Set());
     return;
   }
 
+  const finalBoard = response.result.board;
+  const stoppedReelIndexes = new Set<number>();
+
+  const animationInterval = window.setInterval(() => {
+    const randomBoard = createRandomBoard();
+
+    setBoard((currentBoard) =>
+      currentBoard.map((row, rowIndex) =>
+        row.map((_symbolCode, reelIndex) => {
+          if (stoppedReelIndexes.has(reelIndex)) {
+            return finalBoard[rowIndex][reelIndex];
+          }
+
+          return randomBoard[rowIndex][reelIndex];
+        })
+      )
+    );
+  }, 55);
+
+  for (let reelIndex = 0; reelIndex < 5; reelIndex += 1) {
+    await wait(260);
+
+    stoppedReelIndexes.add(reelIndex);
+    setStoppedReels(new Set(stoppedReelIndexes));
+
+    setBoard((currentBoard) =>
+      currentBoard.map((row, rowIndex) =>
+        row.map((symbolCode, currentReelIndex) => {
+          if (currentReelIndex === reelIndex) {
+            return finalBoard[rowIndex][currentReelIndex];
+          }
+
+          return symbolCode;
+        })
+      )
+    );
+  }
+
+  await wait(180);
+
+  window.clearInterval(animationInterval);
+
   const nextSpinCount = spinCount + 1;
 
-  setBoard(response.result.board);
+  setBoard(finalBoard);
   setLastWin(response.result.evaluation.totalWin);
   setLastMultiplier(response.result.evaluation.totalMultiplier);
   setWinningLines(response.result.evaluation.winningLines);
@@ -99,7 +127,9 @@ export default function App() {
       ...currentHistory,
     ].slice(0, 5)
   );
+
   setIsSpinning(false);
+  setStoppedReels(new Set());
 }
 
   function handleBetChange(nextBet: number) {
@@ -200,10 +230,14 @@ export default function App() {
                 const symbol = SYMBOLS[symbolCode];
                 const cellKey = `${rowIndex}-${reelIndex}`;
                 const isWinningCell = winningCells.has(cellKey) && !isSpinning;
+                const isReelStopped = stoppedReels.has(reelIndex);
+                const isReelSpinning = isSpinning && !isReelStopped;
 
                 return (
                   <div
-                    className={`slot-cell ${symbol.type} ${isWinningCell ? "winning-cell" : ""}`}
+                    className={`slot-cell ${symbol.type} ${isWinningCell ? "winning-cell" : ""} ${
+                      isReelSpinning ? "reel-spinning-cell" : ""
+                    } ${isReelStopped ? "reel-stopped-cell" : ""}`}
                     key={`${rowIndex}-${reelIndex}`}
                   >
                     <span className="symbol-icon">{symbol.icon}</span>

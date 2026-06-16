@@ -544,3 +544,38 @@ h1 {
   color: #ffb3b3;
   font-weight: 800;
 }
+.reel-spinning-cell {
+  animation: reelShake 0.12s linear infinite;
+  filter: blur(1.4px) brightness(1.15);
+  opacity: 0.82;
+}
+
+.reel-stopped-cell {
+  animation: reelStopPop 0.22s ease-out;
+}
+
+@keyframes reelShake {
+  0% {
+    transform: translateY(-3px) scale(0.98);
+  }
+
+  50% {
+    transform: translateY(3px) scale(1.02);
+  }
+
+  100% {
+    transform: translateY(-3px) scale(0.98);
+  }
+}
+
+@keyframes reelStopPop {
+  0% {
+    transform: scale(0.92);
+    filter: brightness(1.8);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
