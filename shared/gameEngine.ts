@@ -17,6 +17,7 @@ export type SlotSymbol = {
   code: SymbolCode;
   label: string;
   icon: string;
+  image: string;
   type: SymbolType;
 };
 
@@ -24,6 +25,7 @@ export type PaytableEntry = {
   symbol: SymbolCode;
   name: string;
   icon: string;
+  image: string;
   three?: number;
   four?: number;
   five?: number;
@@ -59,32 +61,176 @@ export type SpinHistoryItem = {
 };
 
 export const SYMBOLS: Record<SymbolCode, SlotSymbol> = {
-  W: { code: "W", label: "Wild Gold", icon: "🟨", type: "wild" },
-  S: { code: "S", label: "Scatter Bonus", icon: "⭐", type: "scatter" },
-  H1: { code: "H1", label: "Chest", icon: "💰", type: "high" },
-  H2: { code: "H2", label: "Crown", icon: "👑", type: "high" },
-  H3: { code: "H3", label: "Gem", icon: "💎", type: "high" },
-  H4: { code: "H4", label: "Ring", icon: "💍", type: "high" },
-  L1: { code: "L1", label: "A", icon: "A", type: "low" },
-  L2: { code: "L2", label: "K", icon: "K", type: "low" },
-  L3: { code: "L3", label: "Q", icon: "Q", type: "low" },
-  L4: { code: "L4", label: "J", icon: "J", type: "low" },
-  L5: { code: "L5", label: "10", icon: "10", type: "low" },
+  W: {
+    code: "W",
+    label: "Wild Gold",
+    icon: "W",
+    image: "/symbols/wild.png",
+    type: "wild",
+  },
+  S: {
+    code: "S",
+    label: "Scatter Bonus",
+    icon: "S",
+    image: "/symbols/scatter.png",
+    type: "scatter",
+  },
+  H1: {
+    code: "H1",
+    label: "Chest",
+    icon: "Chest",
+    image: "/symbols/chest.png",
+    type: "high",
+  },
+  H2: {
+    code: "H2",
+    label: "Crown",
+    icon: "Crown",
+    image: "/symbols/crown.png",
+    type: "high",
+  },
+  H3: {
+    code: "H3",
+    label: "Gem",
+    icon: "Gem",
+    image: "/symbols/gem.png",
+    type: "high",
+  },
+  H4: {
+    code: "H4",
+    label: "Ring",
+    icon: "Ring",
+    image: "/symbols/ring.png",
+    type: "high",
+  },
+  L1: {
+    code: "L1",
+    label: "A",
+    icon: "A",
+    image: "/symbols/a.png",
+    type: "low",
+  },
+  L2: {
+    code: "L2",
+    label: "K",
+    icon: "K",
+    image: "/symbols/k.png",
+    type: "low",
+  },
+  L3: {
+    code: "L3",
+    label: "Q",
+    icon: "Q",
+    image: "/symbols/q.png",
+    type: "low",
+  },
+  L4: {
+    code: "L4",
+    label: "J",
+    icon: "J",
+    image: "/symbols/j.png",
+    type: "low",
+  },
+  L5: {
+    code: "L5",
+    label: "10",
+    icon: "10",
+    image: "/symbols/ten.png",
+    type: "low",
+  },
 };
 
 export const PAYTABLE: PaytableEntry[] = [
-  { symbol: "W", name: "Wild Gold", icon: "🪙", five: 95 },
+  {
+    symbol: "W",
+    name: "Wild Gold",
+    icon: "W",
+    image: "/symbols/wild.png",
+    five: 95,
+  },
 
-  { symbol: "H1", name: "Chest", icon: "💰", three: 2.4, four: 13, five: 80 },
-  { symbol: "H2", name: "Crown", icon: "👑", three: 1.8, four: 9, five: 55 },
-  { symbol: "H3", name: "Gem", icon: "💎", three: 1.4, four: 6, five: 38 },
-  { symbol: "H4", name: "Ring", icon: "💍", three: 1, four: 4, five: 25 },
-  
-  { symbol: "L1", name: "A", icon: "A", three: 0.28, four: 1.1, five: 7 },
-  { symbol: "L2", name: "K", icon: "K", three: 0.22, four: 0.9, five: 5.5 },
-  { symbol: "L3", name: "Q", icon: "Q", three: 0.18, four: 0.75, five: 4.3 },
-  { symbol: "L4", name: "J", icon: "J", three: 0.15, four: 0.6, five: 3.4 },
-  { symbol: "L5", name: "10", icon: "10", three: 0.12, four: 0.5, five: 2.6 },
+  {
+    symbol: "H1",
+    name: "Chest",
+    icon: "Chest",
+    image: "/symbols/chest.png",
+    three: 2.4,
+    four: 13,
+    five: 80,
+  },
+  {
+    symbol: "H2",
+    name: "Crown",
+    icon: "Crown",
+    image: "/symbols/crown.png",
+    three: 1.8,
+    four: 9,
+    five: 55,
+  },
+  {
+    symbol: "H3",
+    name: "Gem",
+    icon: "Gem",
+    image: "/symbols/gem.png",
+    three: 1.4,
+    four: 6,
+    five: 38,
+  },
+  {
+    symbol: "H4",
+    name: "Ring",
+    icon: "Ring",
+    image: "/symbols/ring.png",
+    three: 1,
+    four: 4,
+    five: 25,
+  },
+
+  {
+    symbol: "L1",
+    name: "A",
+    icon: "A",
+    image: "/symbols/a.png",
+    three: 0.28,
+    four: 1.1,
+    five: 7,
+  },
+  {
+    symbol: "L2",
+    name: "K",
+    icon: "K",
+    image: "/symbols/k.png",
+    three: 0.22,
+    four: 0.9,
+    five: 5.5,
+  },
+  {
+    symbol: "L3",
+    name: "Q",
+    icon: "Q",
+    image: "/symbols/q.png",
+    three: 0.18,
+    four: 0.75,
+    five: 4.3,
+  },
+  {
+    symbol: "L4",
+    name: "J",
+    icon: "J",
+    image: "/symbols/j.png",
+    three: 0.15,
+    four: 0.6,
+    five: 3.4,
+  },
+  {
+    symbol: "L5",
+    name: "10",
+    icon: "10",
+    image: "/symbols/ten.png",
+    three: 0.12,
+    four: 0.5,
+    five: 2.6,
+  },
 ];
 
 export const WEIGHTED_REEL: SymbolCode[] = [

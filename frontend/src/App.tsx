@@ -277,7 +277,7 @@ export default function App() {
                     } ${isReelStopped ? "reel-stopped-cell" : ""}`}
                     key={`${rowIndex}-${reelIndex}`}
                   >
-                    <span className="symbol-icon">{symbol.icon}</span>
+                    <img className="symbol-image" src={symbol.image} alt={symbol.label} />
                     <span className="symbol-code">{symbol.label}</span>
                   </div>
                 );
@@ -374,7 +374,7 @@ export default function App() {
             {PAYTABLE.map((entry) => (
               <div className="paytable-row" key={entry.symbol}>
                 <div className="paytable-symbol">
-                  <span>{entry.icon}</span>
+                  <img className="paytable-symbol-image" src={entry.image} alt={entry.name} />
                   <strong>{entry.name}</strong>
                 </div>
                 <div>{entry.three ? `${entry.three}x` : "-"}</div>

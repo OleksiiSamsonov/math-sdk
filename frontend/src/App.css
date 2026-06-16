@@ -870,3 +870,58 @@ h1 {
     0 0 28px rgba(255, 193, 7, 0.16),
     inset 0 0 32px rgba(255, 255, 255, 0.04);
 }
+.symbol-image {
+  width: 86px;
+  height: 86px;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 6px;
+  filter:
+    drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45))
+    drop-shadow(0 0 10px rgba(255, 194, 77, 0.18));
+  transition:
+    transform 0.18s ease,
+    filter 0.18s ease;
+}
+
+.slot-cell.wild .symbol-image,
+.slot-cell.scatter .symbol-image {
+  width: 94px;
+  height: 94px;
+}
+
+.slot-cell.high .symbol-image {
+  width: 90px;
+  height: 90px;
+}
+
+.slot-cell.low .symbol-image {
+  width: 88px;
+  height: 88px;
+}
+
+.slot-cell:hover .symbol-image {
+  transform: scale(1.06);
+  filter:
+    drop-shadow(0 10px 14px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 16px rgba(255, 210, 90, 0.42));
+}
+
+.reel-spinning-cell .symbol-image {
+  transform: scaleY(1.08);
+}
+
+.winning-cell .symbol-image {
+  filter:
+    drop-shadow(0 10px 16px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 20px rgba(255, 220, 90, 0.95));
+}
+
+.paytable-symbol-image {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  margin-right: 10px;
+  vertical-align: middle;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
