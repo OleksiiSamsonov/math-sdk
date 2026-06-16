@@ -35,6 +35,8 @@ export default function App() {
   const [freeSpinsLeft, setFreeSpinsLeft] = useState(0);
   const [lastFreeSpinsAwarded, setLastFreeSpinsAwarded] = useState(0);
   const [showBonusIntro, setShowBonusIntro] = useState(false);
+  const [showBonusComplete, setShowBonusComplete] = useState(false);
+  const [bonusTotalWin, setBonusTotalWin] = useState(0);
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
@@ -165,20 +167,42 @@ export default function App() {
     : response.balanceAfterWin
 );
     setLastFreeSpinsAwarded(awardedFreeSpins);
-    if (awardedFreeSpins > 0) {
+
+if (!isFreeSpinMode && awardedFreeSpins > 0) {
+  setBonusTotalWin(0);
   setShowBonusIntro(true);
 }
 
-    setFreeSpinsLeft((currentFreeSpinsLeft) => {
-      const safeCurrentFreeSpinsLeft = Number.isFinite(currentFreeSpinsLeft)
-        ? currentFreeSpinsLeft
-        : 0;
+if (isFreeSpinMode && awardedFreeSpins > 0) {
+  setShowBonusIntro(true);
+}
 
-      const safeAwardedFreeSpins = Number.isFinite(awardedFreeSpins) ? awardedFreeSpins : 0;
-      const spentFreeSpin = isFreeSpinMode ? 1 : 0;
+    const spinWin = Number(response.result.evaluation.totalWin ?? 0);
 
-      return Math.max(safeCurrentFreeSpinsLeft - spentFreeSpin, 0) + safeAwardedFreeSpins;
-    });
+if (isFreeSpinMode) {
+  setBonusTotalWin((currentBonusTotalWin) =>
+    Number((currentBonusTotalWin + spinWin).toFixed(2))
+  );
+}
+
+setFreeSpinsLeft((currentFreeSpinsLeft) => {
+  const safeCurrentFreeSpinsLeft = Number.isFinite(currentFreeSpinsLeft)
+    ? currentFreeSpinsLeft
+    : 0;
+
+  const safeAwardedFreeSpins = Number.isFinite(awardedFreeSpins) ? awardedFreeSpins : 0;
+  const spentFreeSpin = isFreeSpinMode ? 1 : 0;
+  const nextFreeSpinsLeft =
+    Math.max(safeCurrentFreeSpinsLeft - spentFreeSpin, 0) + safeAwardedFreeSpins;
+
+  if (isFreeSpinMode && nextFreeSpinsLeft === 0) {
+    window.setTimeout(() => {
+      setShowBonusComplete(true);
+    }, 450);
+  }
+
+  return nextFreeSpinsLeft;
+});
 
     setSpinCount(nextSpinCount);
     setSpinHistory((currentHistory) =>
@@ -225,6 +249,8 @@ export default function App() {
     setFreeSpinsLeft(0);
     setLastFreeSpinsAwarded(0);
     setShowBonusIntro(false);
+    setShowBonusComplete(false);
+    setBonusTotalWin(0);
   }
 
   function handleForceBonus() {
@@ -233,6 +259,8 @@ export default function App() {
     }
 
     setApiError("");
+    setShowBonusComplete(false);
+    setBonusTotalWin(0);
     setFreeSpinsLeft((currentFreeSpinsLeft) => {
       const safeCurrentFreeSpinsLeft = Number.isFinite(currentFreeSpinsLeft)
         ? currentFreeSpinsLeft
@@ -532,6 +560,45 @@ export default function App() {
         onClick={() => setShowBonusIntro(false)}
       >
         Start Free Spins
+      </button>
+    </div>
+  </div>
+)}
+{showBonusComplete && (
+  <div className="bonus-complete-overlay">
+    <div className="bonus-complete-card">
+      <div className="bonus-complete-glow" />
+
+      <span className="bonus-complete-label">Bonus Complete</span>
+
+      <strong className="bonus-complete-title">
+        {bonusTotalWin.toFixed(2)}
+      </strong>
+
+      <p className="bonus-complete-text">
+        Total Free Spins win. Returning to base game.
+      </p>
+
+      <div className="bonus-complete-stats">
+        <div>
+          <span>Total Bonus Win</span>
+          <strong>{bonusTotalWin.toFixed(2)}</strong>
+        </div>
+
+        <div>
+          <span>Mode</span>
+          <strong>Base Game</strong>
+        </div>
+      </div>
+
+      <button
+        className="bonus-complete-button"
+        onClick={() => {
+          setShowBonusComplete(false);
+          setLastFreeSpinsAwarded(0);
+        }}
+      >
+        Return to Base Game
       </button>
     </div>
   </div>
