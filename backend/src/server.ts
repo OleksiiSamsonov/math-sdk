@@ -9,6 +9,8 @@ import {
 type SpinRequest = {
   bet: number;
   balance: number;
+  isFreeSpin?: boolean;
+
 };
 
 const app = express();
@@ -25,7 +27,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.post("/api/spin", (req, res) => {
-  const { bet, balance } = req.body as SpinRequest;
+  const { bet, balance, isFreeSpin = false } = req.body as SpinRequest;
 
   if (typeof bet !== "number" || bet <= 0) {
     res.status(400).json({
@@ -35,7 +37,7 @@ app.post("/api/spin", (req, res) => {
     return;
   }
 
-  if (typeof balance !== "number" || balance < bet) {
+  if (typeof balance !== "number" || (!isFreeSpin && balance < bet)) {
     res.status(400).json({
       success: false,
       message: "Insufficient balance.",
@@ -44,9 +46,9 @@ app.post("/api/spin", (req, res) => {
   }
 
   const board: SymbolCode[][] = createRandomBoard();
-  const evaluation = evaluateBoard(board, bet);
+  const evaluation = evaluateBoard(board, bet, isFreeSpin ? 2 : 1);
 
-  const balanceAfterBet = Number((balance - bet).toFixed(2));
+  const balanceAfterBet = isFreeSpin ? balance : Number((balance - bet).toFixed(2));
   const balanceAfterWin = Number((balanceAfterBet + evaluation.totalWin).toFixed(2));
 
   res.json({
