@@ -4,12 +4,12 @@ import {
   DEFAULT_BOARD,
   PAYTABLE,
   SYMBOLS,
-  createMockSpinResult,
   createRandomBoard,
   evaluateBoard,
   type SpinHistoryItem,
   type SymbolCode,
 } from "./gameEngine";
+import { requestSpin } from "./mockApi";
 
 export default function App() {
   const [board, setBoard] = useState<SymbolCode[][]>(DEFAULT_BOARD);
@@ -26,52 +26,62 @@ export default function App() {
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
-  function handleSpin() {
-    if (isSpinning || balance < bet) {
-      return;
-    }
-
-    setIsSpinning(true);
-    setLastWin(0);
-    setLastMultiplier(0);
-    setWinningLines([]);
-    setWinningCells(new Set());
-    setBalance((currentBalance) => Number((currentBalance - bet).toFixed(2)));
-
-    const spinFrames = 12;
-    let currentFrame = 0;
-
-    const interval = window.setInterval(() => {
-      setBoard(createRandomBoard());
-      currentFrame += 1;
-
-      if (currentFrame >= spinFrames) {
-        window.clearInterval(interval);
-
-        const result = createMockSpinResult(bet);
-        const nextSpinCount = spinCount + 1;
-
-        setBoard(result.board);
-        setLastWin(result.evaluation.totalWin);
-        setLastMultiplier(result.evaluation.totalMultiplier);
-        setWinningLines(result.evaluation.winningLines);
-        setWinningCells(result.evaluation.winningCells);
-        setBalance((currentBalance) => Number((currentBalance + result.evaluation.totalWin).toFixed(2)));
-        setSpinCount(nextSpinCount);
-        setSpinHistory((currentHistory) => [
-          {
-            id: nextSpinCount,
-            bet,
-            win: result.evaluation.totalWin,
-            multiplier: result.evaluation.totalMultiplier,
-            lines: result.evaluation.winningLines,
-          },
-          ...currentHistory,
-        ].slice(0, 5));
-        setIsSpinning(false);
-      }
-    }, 70);
+async function handleSpin() {
+  if (isSpinning || balance < bet) {
+    return;
   }
+
+  setIsSpinning(true);
+  setLastWin(0);
+  setLastMultiplier(0);
+  setWinningLines([]);
+  setWinningCells(new Set());
+
+  const spinFrames = 12;
+  let currentFrame = 0;
+
+  const animationInterval = window.setInterval(() => {
+    setBoard(createRandomBoard());
+    currentFrame += 1;
+
+    if (currentFrame >= spinFrames) {
+      window.clearInterval(animationInterval);
+    }
+  }, 70);
+
+  const response = await requestSpin({
+    bet,
+    balance,
+  });
+
+  window.clearInterval(animationInterval);
+
+  if (!response.success) {
+    setIsSpinning(false);
+    return;
+  }
+
+  const nextSpinCount = spinCount + 1;
+
+  setBoard(response.result.board);
+  setLastWin(response.result.evaluation.totalWin);
+  setLastMultiplier(response.result.evaluation.totalMultiplier);
+  setWinningLines(response.result.evaluation.winningLines);
+  setWinningCells(response.result.evaluation.winningCells);
+  setBalance(response.balanceAfterWin);
+  setSpinCount(nextSpinCount);
+  setSpinHistory((currentHistory) => [
+    {
+      id: nextSpinCount,
+      bet,
+      win: response.result.evaluation.totalWin,
+      multiplier: response.result.evaluation.totalMultiplier,
+      lines: response.result.evaluation.winningLines,
+    },
+    ...currentHistory,
+  ].slice(0, 5));
+  setIsSpinning(false);
+}
 
   function handleBetChange(nextBet: number) {
     if (isSpinning) {
