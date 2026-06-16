@@ -37,6 +37,7 @@ export default function App() {
   const [showBonusIntro, setShowBonusIntro] = useState(false);
   const [showBonusComplete, setShowBonusComplete] = useState(false);
   const [bonusTotalWin, setBonusTotalWin] = useState(0);
+  const [showDevPanel, setShowDevPanel] = useState(false);
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
@@ -330,9 +331,22 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
             Reset Balance
           </button>
 
-          <button className="secondary-button bonus-test-button" onClick={handleForceBonus}>
-            Dev: Force Bonus
-          </button>
+          <button
+  className="secondary-button dev-toggle-button"
+  onClick={() => setShowDevPanel((value) => !value)}
+>
+  Dev
+</button>
+
+{showDevPanel && (
+  <div className="dev-panel">
+    <span>Developer Tools</span>
+
+    <button className="secondary-button bonus-test-button" onClick={handleForceBonus}>
+      Force Bonus
+    </button>
+  </div>
+)}
         </aside>
 
         <section className={`slot-machine ${isFreeSpinMode ? "free-spins-mode" : ""}`}>

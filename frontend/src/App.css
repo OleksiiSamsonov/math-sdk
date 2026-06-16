@@ -1987,3 +1987,30 @@ h1 {
     transform: rotate(360deg);
   }
 }
+.dev-toggle-button {
+  opacity: 0.48;
+  border-style: dashed;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.dev-toggle-button:hover {
+  opacity: 0.9;
+}
+
+.dev-panel {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.dev-panel span {
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
