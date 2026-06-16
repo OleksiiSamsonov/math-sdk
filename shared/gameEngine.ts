@@ -73,16 +73,16 @@ export const SYMBOLS: Record<SymbolCode, SlotSymbol> = {
 };
 
 export const PAYTABLE: PaytableEntry[] = [
-  { symbol: "W", name: "Wild Gold", icon: "🟨", five: 75 },
-  { symbol: "H1", name: "Chest", icon: "💰", three: 4, four: 16, five: 65 },
-  { symbol: "H2", name: "Crown", icon: "👑", three: 2.6, four: 10, five: 35 },
-  { symbol: "H3", name: "Gem", icon: "💎", three: 2, four: 7, five: 22 },
-  { symbol: "H4", name: "Ring", icon: "💍", three: 1.5, four: 5, five: 15 },
-  { symbol: "L1", name: "A", icon: "A", three: 0.75, four: 2.3, five: 7.5 },
-  { symbol: "L2", name: "K", icon: "K", three: 0.6, four: 1.8, five: 5.7 },
-  { symbol: "L3", name: "Q", icon: "Q", three: 0.45, four: 1.5, five: 4.7 },
-  { symbol: "L4", name: "J", icon: "J", three: 0.4, four: 1.2, five: 4 },
-  { symbol: "L5", name: "10", icon: "10", three: 0.35, four: 1, five: 3 },
+  { symbol: "W", name: "Wild Gold", icon: "🪙", five: 180 },
+  { symbol: "H1", name: "Chest", icon: "💰", three: 3.5, four: 22, five: 140 },
+  { symbol: "H2", name: "Crown", icon: "👑", three: 2.6, four: 16, five: 95 },
+  { symbol: "H3", name: "Gem", icon: "💎", three: 2, four: 11, five: 65 },
+  { symbol: "H4", name: "Ring", icon: "💍", three: 1.4, four: 7, five: 42 },
+  { symbol: "L1", name: "A", icon: "A", three: 0.45, four: 1.8, five: 12 },
+  { symbol: "L2", name: "K", icon: "K", three: 0.35, four: 1.5, five: 9 },
+  { symbol: "L3", name: "Q", icon: "Q", three: 0.28, four: 1.2, five: 7 },
+  { symbol: "L4", name: "J", icon: "J", three: 0.22, four: 1, five: 5.5 },
+  { symbol: "L5", name: "10", icon: "10", three: 0.18, four: 0.8, five: 4 },
 ];
 
 export const WEIGHTED_REEL: SymbolCode[] = [
@@ -90,35 +90,42 @@ export const WEIGHTED_REEL: SymbolCode[] = [
   "L5",
   "L5",
   "L5",
-  "L5",
-  "L5",
+
   "L4",
   "L4",
   "L4",
   "L4",
-  "L4",
+
   "L3",
   "L3",
   "L3",
   "L3",
-  "L3",
+
   "L2",
   "L2",
   "L2",
-  "L2",
+
   "L1",
   "L1",
   "L1",
-  "L1",
+
   "H4",
   "H4",
   "H4",
+
   "H3",
   "H3",
+  "H3",
+
   "H2",
   "H2",
+
   "H1",
+  "H1",
+
   "W",
+  "W",
+
   "S",
 ];
 
