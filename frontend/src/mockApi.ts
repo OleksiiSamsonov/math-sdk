@@ -1,4 +1,4 @@
-import { createMockSpinResult, type SpinResult } from "./gameEngine";
+import type { SpinResult } from "./gameEngine";
 
 export type SpinRequest = {
   bet: number;
@@ -19,39 +19,32 @@ export type SpinErrorResponse = {
 
 export type SpinApiResponse = SpinResponse | SpinErrorResponse;
 
-const MOCK_LATENCY_MS = 350;
-
-function wait(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
-}
+const BACKEND_URL = "http://localhost:4000";
 
 export async function requestSpin(request: SpinRequest): Promise<SpinApiResponse> {
-  await wait(MOCK_LATENCY_MS);
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/spin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
 
-  if (request.bet <= 0) {
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message ?? "Spin request failed.",
+      };
+    }
+
+    return data as SpinResponse;
+  } catch {
     return {
       success: false,
-      message: "Bet must be greater than zero.",
+      message: "Backend is not available. Start the backend server and try again.",
     };
   }
-
-  if (request.balance < request.bet) {
-    return {
-      success: false,
-      message: "Insufficient balance.",
-    };
-  }
-
-  const result = createMockSpinResult(request.bet);
-  const balanceAfterBet = Number((request.balance - request.bet).toFixed(2));
-  const balanceAfterWin = Number((balanceAfterBet + result.evaluation.totalWin).toFixed(2));
-
-  return {
-    success: true,
-    result,
-    balanceAfterBet,
-    balanceAfterWin,
-  };
 }
