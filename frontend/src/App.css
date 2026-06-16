@@ -579,3 +579,67 @@ h1 {
     filter: brightness(1);
   }
 }
+.winning-cell {
+  position: relative;
+  z-index: 5;
+  animation: winningPulse 0.75s ease-in-out infinite;
+  box-shadow:
+    0 0 0 2px rgba(255, 215, 90, 0.95),
+    0 0 22px rgba(255, 193, 7, 0.9),
+    inset 0 0 18px rgba(255, 255, 255, 0.22);
+}
+
+.winning-cell::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 230, 120, 0.8);
+  animation: winRing 0.75s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.win-banner {
+  animation: winBannerPop 0.45s ease-out;
+}
+
+@keyframes winningPulse {
+  0% {
+    transform: scale(1);
+    filter: brightness(1.1);
+  }
+
+  50% {
+    transform: scale(1.07);
+    filter: brightness(1.45);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes winRing {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.94);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.16);
+  }
+}
+
+@keyframes winBannerPop {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.94);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
