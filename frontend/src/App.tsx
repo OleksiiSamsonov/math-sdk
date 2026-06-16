@@ -253,13 +253,15 @@ export default function App() {
             <div className="rtp-badge">RTP ≈ 94–95%</div>
           </div>
 
-          {lastWin > 0 && !isSpinning && (
-            <div className="win-banner">
+          <div
+          className={`win-banner ${
+            lastWin > 0 && !isSpinning ? "win-banner-visible" : "win-banner-hidden"
+            }`}
+            >
               <span>Win</span>
               <strong>{displayedWin.toFixed(2)}</strong>
               <small>{lastMultiplier.toFixed(2)}x multiplier</small>
-            </div>
-          )}
+              </div>
 
           <div className={`reel-grid ${isSpinning ? "spinning" : ""}`}>
             {board.map((row, rowIndex) =>
@@ -278,7 +280,6 @@ export default function App() {
                     key={`${rowIndex}-${reelIndex}`}
                   >
                     <img className="symbol-image" src={symbol.image} alt={symbol.label} />
-                    <span className="symbol-code">{symbol.label}</span>
                   </div>
                 );
               })

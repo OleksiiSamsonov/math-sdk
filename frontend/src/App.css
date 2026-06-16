@@ -925,3 +925,333 @@ h1 {
   vertical-align: middle;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
+.slot-cell {
+  padding: 8px 10px;
+  justify-content: center;
+  gap: 2px;
+}
+
+.symbol-image {
+  width: 104px;
+  height: 104px;
+  margin-bottom: 2px;
+  object-fit: contain;
+}
+
+.slot-cell.wild .symbol-image {
+  width: 112px;
+  height: 112px;
+}
+
+.slot-cell.scatter .symbol-image {
+  width: 112px;
+  height: 112px;
+}
+
+.slot-cell.high .symbol-image {
+  width: 108px;
+  height: 108px;
+}
+
+.slot-cell.low .symbol-image {
+  width: 106px;
+  height: 106px;
+}
+
+.symbol-code {
+  font-size: 11px;
+  opacity: 0.72;
+  letter-spacing: 0.02em;
+  transform: translateY(-2px);
+}
+
+.slot-cell.wild .symbol-code,
+.slot-cell.scatter .symbol-code {
+  font-size: 10px;
+  opacity: 0.62;
+}
+
+.winning-cell .symbol-code {
+  opacity: 0.95;
+  color: #fff1a8;
+}
+
+.slot-cell:hover .symbol-code {
+  opacity: 0.95;
+}
+.slot-cell .symbol-code {
+  font-size: 9px;
+  opacity: 0.28;
+  transform: translateY(-4px);
+}
+
+.slot-cell:hover .symbol-code,
+.winning-cell .symbol-code {
+  opacity: 0.75;
+}
+
+.slot-cell.high .symbol-image {
+  width: 116px;
+  height: 116px;
+}
+
+.slot-cell.high .symbol-code {
+  transform: translateY(-8px);
+}
+
+.winning-cell {
+  box-shadow:
+    0 0 0 1px rgba(255, 226, 120, 0.72),
+    0 0 16px rgba(255, 193, 7, 0.52),
+    inset 0 0 13px rgba(255, 255, 255, 0.12);
+}
+
+.winning-cell::after {
+  border-color: rgba(255, 230, 120, 0.52);
+}
+.winning-cell {
+  background:
+    radial-gradient(circle at center, rgba(255, 214, 80, 0.16), rgba(35, 22, 6, 0.22) 62%),
+    linear-gradient(145deg, rgba(255, 204, 77, 0.08), rgba(0, 0, 0, 0.18));
+  box-shadow:
+    0 0 0 1px rgba(255, 232, 130, 0.78),
+    0 0 11px rgba(255, 193, 7, 0.42),
+    0 0 24px rgba(255, 193, 7, 0.2),
+    inset 0 0 9px rgba(255, 255, 255, 0.08);
+}
+
+.winning-cell::after {
+  inset: -4px;
+  border-radius: 16px;
+  border-color: rgba(255, 230, 120, 0.38);
+}
+
+.winning-cell .symbol-image {
+  transform: scale(1.04);
+  filter:
+    drop-shadow(0 10px 16px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 12px rgba(255, 220, 90, 0.65));
+}
+.slot-cell .symbol-code {
+  display: none;
+}
+
+.slot-cell {
+  overflow: hidden;
+  transform: none;
+}
+
+.reel-spinning-cell {
+  animation: none;
+  transform: none;
+}
+
+.reel-spinning-cell .symbol-image {
+  animation: symbolVerticalSpin 0.16s linear infinite;
+  filter: blur(2.2px) brightness(1.22);
+  opacity: 0.78;
+}
+
+.reel-stopped-cell {
+  animation: none;
+}
+
+.reel-stopped-cell .symbol-image {
+  animation: symbolStopPop 0.22s ease-out;
+}
+
+.winning-cell {
+  animation: winningCellGlow 0.75s ease-in-out infinite;
+  transform: none;
+}
+
+.winning-cell .symbol-image {
+  animation: winningSymbolPulse 0.75s ease-in-out infinite;
+}
+
+@keyframes symbolVerticalSpin {
+  0% {
+    transform: translateY(-18px) scaleY(0.96);
+  }
+
+  45% {
+    transform: translateY(10px) scaleY(1.04);
+  }
+
+  100% {
+    transform: translateY(26px) scaleY(0.94);
+  }
+}
+
+@keyframes symbolStopPop {
+  0% {
+    transform: scale(0.9);
+    filter: brightness(1.8);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes winningCellGlow {
+  0% {
+    box-shadow:
+      0 0 0 1px rgba(255, 232, 130, 0.72),
+      0 0 10px rgba(255, 193, 7, 0.38),
+      inset 0 0 8px rgba(255, 255, 255, 0.08);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255, 232, 130, 0.9),
+      0 0 18px rgba(255, 193, 7, 0.58),
+      inset 0 0 12px rgba(255, 255, 255, 0.1);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(255, 232, 130, 0.72),
+      0 0 10px rgba(255, 193, 7, 0.38),
+      inset 0 0 8px rgba(255, 255, 255, 0.08);
+  }
+}
+
+@keyframes winningSymbolPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.045);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+.win-banner {
+  min-height: 64px;
+}
+
+.win-banner-hidden {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  animation: none;
+}
+
+.win-banner-visible {
+  visibility: visible;
+  opacity: 1;
+}
+.slot-machine {
+  overflow: hidden;
+}
+
+.reel-grid {
+  width: 100%;
+  height: 540px;
+  min-height: 540px;
+  max-height: 540px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  overflow: hidden;
+  contain: layout paint;
+}
+
+.slot-cell {
+  width: 100%;
+  height: 160px;
+  min-height: 160px;
+  max-height: 160px;
+  box-sizing: border-box;
+  overflow: hidden;
+  transform: none !important;
+  will-change: auto;
+}
+
+.slot-cell::before,
+.slot-cell::after {
+  pointer-events: none;
+}
+
+.symbol-image {
+  max-width: 118px;
+  max-height: 118px;
+  object-fit: contain;
+  transform-origin: center center;
+  will-change: transform, filter, opacity;
+}
+
+.reel-spinning-cell,
+.reel-stopped-cell,
+.winning-cell {
+  transform: none !important;
+}
+
+.reel-spinning-cell {
+  animation: none !important;
+}
+
+.reel-stopped-cell {
+  animation: none !important;
+}
+
+.winning-cell {
+  animation: none !important;
+}
+
+.reel-spinning-cell .symbol-image {
+  animation: symbolVerticalSpinStable 0.16s linear infinite;
+}
+
+.reel-stopped-cell .symbol-image {
+  animation: symbolStopPopStable 0.22s ease-out;
+}
+
+.winning-cell .symbol-image {
+  animation: winningSymbolPulseStable 0.75s ease-in-out infinite;
+}
+
+@keyframes symbolVerticalSpinStable {
+  0% {
+    transform: translateY(-14px) scaleY(0.98);
+  }
+
+  50% {
+    transform: translateY(10px) scaleY(1.02);
+  }
+
+  100% {
+    transform: translateY(22px) scaleY(0.98);
+  }
+}
+
+@keyframes symbolStopPopStable {
+  0% {
+    transform: scale(0.94);
+    filter: brightness(1.55);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes winningSymbolPulseStable {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.035);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
