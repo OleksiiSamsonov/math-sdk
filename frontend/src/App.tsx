@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import "./App.css";
 
 type SymbolCode = "W" | "S" | "H1" | "H2" | "H3" | "H4" | "L1" | "L2" | "L3" | "L4" | "L5";
@@ -17,6 +17,30 @@ type PaytableEntry = {
   three?: number;
   four?: number;
   five?: number;
+};
+
+type LineWin = {
+  lineNumber: number;
+  symbol: SymbolCode;
+  count: number;
+  payout: number;
+  cells: string[];
+};
+
+type BoardEvaluation = {
+  totalMultiplier: number;
+  totalWin: number;
+  winningLines: number[];
+  winningCells: Set<string>;
+  lineWins: LineWin[];
+};
+
+type SpinHistoryItem = {
+  id: number;
+  bet: number;
+  win: number;
+  multiplier: number;
+  lines: number[];
 };
 
 const SYMBOLS: Record<SymbolCode, SlotSymbol> = {
@@ -122,13 +146,28 @@ function getPayout(symbol: SymbolCode, count: number): number {
   return 0;
 }
 
-function evaluateLine(lineSymbols: SymbolCode[]): { symbol: SymbolCode; count: number; payout: number } | null {
+function evaluateLine(
+  lineSymbols: SymbolCode[],
+  line: number[],
+  lineNumber: number
+): LineWin | null {
   const firstNonWild = lineSymbols.find((symbol) => symbol !== "W" && symbol !== "S");
 
   if (!firstNonWild) {
     const wildCount = lineSymbols.filter((symbol) => symbol === "W").length;
     const payout = getPayout("W", wildCount);
-    return payout > 0 ? { symbol: "W", count: wildCount, payout } : null;
+
+    if (payout <= 0) {
+      return null;
+    }
+
+    return {
+      lineNumber,
+      symbol: "W",
+      count: wildCount,
+      payout,
+      cells: line.slice(0, wildCount).map((rowIndex, reelIndex) => `${rowIndex}-${reelIndex}`),
+    };
   }
 
   let count = 0;
@@ -152,30 +191,36 @@ function evaluateLine(lineSymbols: SymbolCode[]): { symbol: SymbolCode; count: n
   }
 
   return {
+    lineNumber,
     symbol: firstNonWild,
     count,
     payout,
+    cells: line.slice(0, count).map((rowIndex, reelIndex) => `${rowIndex}-${reelIndex}`),
   };
 }
 
-function evaluateBoard(board: SymbolCode[][], bet: number) {
+function evaluateBoard(board: SymbolCode[][], bet: number): BoardEvaluation {
   let totalMultiplier = 0;
-  const winningLines: number[] = [];
+  const lineWins: LineWin[] = [];
+  const winningCells = new Set<string>();
 
   PAYLINES.forEach((line, lineIndex) => {
     const lineSymbols = line.map((rowIndex, reelIndex) => board[rowIndex][reelIndex]);
-    const result = evaluateLine(lineSymbols);
+    const result = evaluateLine(lineSymbols, line, lineIndex + 1);
 
     if (result) {
       totalMultiplier += result.payout;
-      winningLines.push(lineIndex + 1);
+      lineWins.push(result);
+      result.cells.forEach((cell) => winningCells.add(cell));
     }
   });
 
   return {
     totalMultiplier,
     totalWin: Number((totalMultiplier * bet).toFixed(2)),
-    winningLines,
+    winningLines: lineWins.map((win) => win.lineNumber),
+    winningCells,
+    lineWins,
   };
 }
 
@@ -184,12 +229,15 @@ export default function App() {
   const [bet, setBet] = useState(1);
   const [balance, setBalance] = useState(1000);
   const [lastWin, setLastWin] = useState(0);
+  const [lastMultiplier, setLastMultiplier] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinCount, setSpinCount] = useState(0);
   const [showPaytable, setShowPaytable] = useState(false);
   const [winningLines, setWinningLines] = useState<number[]>([]);
+  const [winningCells, setWinningCells] = useState<Set<string>>(new Set());
+  const [spinHistory, setSpinHistory] = useState<SpinHistoryItem[]>([]);
 
-  const evaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
+  const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
   function handleSpin() {
     if (isSpinning || balance < bet) {
@@ -198,10 +246,12 @@ export default function App() {
 
     setIsSpinning(true);
     setLastWin(0);
+    setLastMultiplier(0);
     setWinningLines([]);
+    setWinningCells(new Set());
     setBalance((currentBalance) => Number((currentBalance - bet).toFixed(2)));
 
-    const spinFrames = 10;
+    const spinFrames = 12;
     let currentFrame = 0;
 
     const interval = window.setInterval(() => {
@@ -213,15 +263,28 @@ export default function App() {
 
         const finalBoard = createRandomBoard();
         const result = evaluateBoard(finalBoard, bet);
+        const nextSpinCount = spinCount + 1;
 
         setBoard(finalBoard);
         setLastWin(result.totalWin);
+        setLastMultiplier(result.totalMultiplier);
         setWinningLines(result.winningLines);
+        setWinningCells(result.winningCells);
         setBalance((currentBalance) => Number((currentBalance + result.totalWin).toFixed(2)));
-        setSpinCount((currentCount) => currentCount + 1);
+        setSpinCount(nextSpinCount);
+        setSpinHistory((currentHistory) => [
+          {
+            id: nextSpinCount,
+            bet,
+            win: result.totalWin,
+            multiplier: result.totalMultiplier,
+            lines: result.winningLines,
+          },
+          ...currentHistory,
+        ].slice(0, 5));
         setIsSpinning(false);
       }
-    }, 80);
+    }, 70);
   }
 
   function handleBetChange(nextBet: number) {
@@ -232,21 +295,36 @@ export default function App() {
     setBet(nextBet);
   }
 
+  function handleResetBalance() {
+    if (isSpinning) {
+      return;
+    }
+
+    setBalance(1000);
+    setLastWin(0);
+    setLastMultiplier(0);
+    setSpinCount(0);
+    setWinningLines([]);
+    setWinningCells(new Set());
+    setSpinHistory([]);
+    setBoard(DEFAULT_BOARD);
+  }
+
   return (
     <main className="app-shell">
       <section className="hero-panel">
         <div>
-          <p className="eyebrow">Gold Rush Lines v0.1</p>
+          <p className="eyebrow">Gold Rush Lines v0.2</p>
           <h1>Gold Rush Lines</h1>
           <p className="subtitle">
-            Classic 5×3 video slot prototype with 20 paylines, Wild Gold, and base game RTP tuned around 94–95%.
+            Classic 5×3 video slot prototype with 20 paylines, Wild Gold, highlighted wins, and base game RTP tuned around 94–95%.
           </p>
         </div>
 
         <div className="status-card">
           <span>Mode</span>
           <strong>Base Game</strong>
-          <small>Free Spins disabled in v0.1</small>
+          <small>Free Spins disabled in v0.1/v0.2</small>
         </div>
       </section>
 
@@ -275,6 +353,10 @@ export default function App() {
           <button className="secondary-button" onClick={() => setShowPaytable((value) => !value)}>
             {showPaytable ? "Hide Paytable" : "Show Paytable"}
           </button>
+
+          <button className="secondary-button reset-button" onClick={handleResetBalance}>
+            Reset Balance
+          </button>
         </aside>
 
         <section className="slot-machine">
@@ -286,13 +368,26 @@ export default function App() {
             <div className="rtp-badge">RTP ≈ 94–95%</div>
           </div>
 
+          {lastWin > 0 && !isSpinning && (
+            <div className="win-banner">
+              <span>Win</span>
+              <strong>{lastWin.toFixed(2)}</strong>
+              <small>{lastMultiplier.toFixed(2)}x multiplier</small>
+            </div>
+          )}
+
           <div className={`reel-grid ${isSpinning ? "spinning" : ""}`}>
             {board.map((row, rowIndex) =>
               row.map((symbolCode, reelIndex) => {
                 const symbol = SYMBOLS[symbolCode];
+                const cellKey = `${rowIndex}-${reelIndex}`;
+                const isWinningCell = winningCells.has(cellKey) && !isSpinning;
 
                 return (
-                  <div className={`slot-cell ${symbol.type}`} key={`${rowIndex}-${reelIndex}-${symbolCode}`}>
+                  <div
+                    className={`slot-cell ${symbol.type} ${isWinningCell ? "winning-cell" : ""}`}
+                    key={`${rowIndex}-${reelIndex}`}
+                  >
                     <span className="symbol-icon">{symbol.icon}</span>
                     <span className="symbol-code">{symbol.label}</span>
                   </div>
@@ -320,12 +415,32 @@ export default function App() {
           </div>
 
           <div className="result-strip">
-            <span>Current Board Multiplier: {evaluation.totalMultiplier.toFixed(2)}x</span>
+            <span>Current Board Multiplier: {currentEvaluation.totalMultiplier.toFixed(2)}x</span>
             <span>
               Winning Lines: {winningLines.length > 0 ? winningLines.join(", ") : "None"}
             </span>
           </div>
         </section>
+      </section>
+
+      <section className="history-panel">
+        <h2>Spin History</h2>
+        {spinHistory.length === 0 ? (
+          <p className="empty-history">No spins yet. Press Spin to start testing the prototype.</p>
+        ) : (
+          <div className="history-list">
+            {spinHistory.map((item) => (
+              <div className={`history-item ${item.win > 0 ? "history-win" : ""}`} key={item.id}>
+                <span>#{item.id}</span>
+                <strong>{item.win.toFixed(2)}</strong>
+                <small>
+                  Bet {item.bet.toFixed(2)} · {item.multiplier.toFixed(2)}x · Lines{" "}
+                  {item.lines.length > 0 ? item.lines.join(", ") : "none"}
+                </small>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {showPaytable && (
@@ -338,15 +453,15 @@ export default function App() {
             <div className="paytable-header">5</div>
 
             {PAYTABLE.map((entry) => (
-              <>
-                <div className="paytable-symbol" key={`${entry.symbol}-symbol`}>
+              <Fragment key={entry.symbol}>
+                <div className="paytable-symbol">
                   <span>{entry.icon}</span>
                   <strong>{entry.name}</strong>
                 </div>
-                <div key={`${entry.symbol}-3`}>{entry.three ? `${entry.three}x` : "-"}</div>
-                <div key={`${entry.symbol}-4`}>{entry.four ? `${entry.four}x` : "-"}</div>
-                <div key={`${entry.symbol}-5`}>{entry.five ? `${entry.five}x` : "-"}</div>
-              </>
+                <div>{entry.three ? `${entry.three}x` : "-"}</div>
+                <div>{entry.four ? `${entry.four}x` : "-"}</div>
+                <div>{entry.five ? `${entry.five}x` : "-"}</div>
+              </Fragment>
             ))}
           </div>
         </section>

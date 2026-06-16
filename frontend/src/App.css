@@ -404,3 +404,131 @@ h1 {
     width: 100%;
   }
 }
+.win-banner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 213, 111, 0.5);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at left, rgba(255, 213, 111, 0.22), transparent 42%),
+    rgba(255, 196, 77, 0.1);
+  animation: winPulse 900ms ease-in-out infinite alternate;
+}
+
+.win-banner span {
+  color: #ffc46d;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.win-banner strong {
+  color: #ffd56f;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.win-banner small {
+  color: #d8c5a2;
+  font-weight: 700;
+}
+
+.slot-cell.winning-cell {
+  border-color: rgba(255, 230, 120, 0.95);
+  box-shadow:
+    0 0 0 2px rgba(255, 213, 111, 0.25),
+    0 0 26px rgba(255, 196, 77, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  transform: translateY(-2px) scale(1.025);
+}
+
+.reset-button {
+  margin-top: 10px;
+  background: rgba(255, 95, 95, 0.08);
+  border-color: rgba(255, 121, 121, 0.26);
+}
+
+.history-panel {
+  margin-top: 24px;
+  padding: 24px;
+  border: 1px solid rgba(255, 207, 111, 0.2);
+  background: rgba(16, 13, 8, 0.86);
+  border-radius: 26px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+}
+
+.history-panel h2 {
+  margin: 0 0 16px;
+  font-size: 28px;
+}
+
+.empty-history {
+  margin: 0;
+  color: #bfa980;
+}
+
+.history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.history-item {
+  display: grid;
+  grid-template-columns: 70px 120px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 13px 15px;
+  border: 1px solid rgba(255, 207, 111, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 196, 77, 0.055);
+}
+
+.history-item span {
+  color: #bfa980;
+  font-weight: 900;
+}
+
+.history-item strong {
+  color: #f8ead2;
+  font-size: 22px;
+}
+
+.history-item small {
+  color: #d8c5a2;
+}
+
+.history-item.history-win {
+  border-color: rgba(255, 213, 111, 0.38);
+  background: rgba(255, 196, 77, 0.1);
+}
+
+.history-item.history-win strong {
+  color: #ffd56f;
+}
+
+@keyframes winPulse {
+  from {
+    box-shadow: 0 0 0 rgba(255, 196, 77, 0);
+  }
+
+  to {
+    box-shadow: 0 0 28px rgba(255, 196, 77, 0.28);
+  }
+}
+
+@media (max-width: 860px) {
+  .history-item {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .win-banner {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
