@@ -2014,3 +2014,81 @@ h1 {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
+.autoplay-box {
+  display: grid;
+  gap: 10px;
+  width: min(280px, 100%);
+  padding: 12px;
+  border: 1px solid rgba(255, 218, 121, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.autoplay-label {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.autoplay-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.autoplay-buttons button,
+.autoplay-stop-button {
+  min-height: 38px;
+  border: 1px solid rgba(255, 218, 121, 0.22);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 121, 0.14), transparent 48%),
+    rgba(255, 255, 255, 0.045);
+  color: #ffe59b;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.autoplay-buttons button:hover,
+.autoplay-stop-button:hover {
+  border-color: rgba(255, 218, 121, 0.48);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 121, 0.22), transparent 48%),
+    rgba(255, 255, 255, 0.07);
+}
+
+.autoplay-buttons button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.autoplay-status {
+  display: grid;
+  gap: 3px;
+  text-align: center;
+}
+
+.autoplay-status span {
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.autoplay-status strong {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.autoplay-stop-button {
+  border-color: rgba(255, 97, 97, 0.32);
+  color: #ffb3b3;
+  background:
+    radial-gradient(circle at top, rgba(255, 97, 97, 0.16), transparent 48%),
+    rgba(255, 255, 255, 0.045);
+}
