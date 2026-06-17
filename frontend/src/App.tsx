@@ -817,10 +817,67 @@ useEffect(() => {
               ))}
             </div>
 
-            <p className="paytable-note">
-              Pays are shown as bet multipliers. Wild substitutes for all paying symbols except
-              Scatter. Three or more Scatters award Free Spins.
-            </p>
+            <div className="rules-section">
+  <h3>Game Rules</h3>
+
+  <div className="rules-grid">
+    <div className="rule-card">
+      <span>Game Type</span>
+      <strong>5×3 Line Slot</strong>
+      <p>Wins are evaluated across 20 fixed paylines from left to right.</p>
+    </div>
+
+    <div className="rule-card">
+      <span>Wild</span>
+      <strong>Wild Gold</strong>
+      <p>Wild substitutes for all regular paying symbols, except Scatter.</p>
+    </div>
+
+    <div className="rule-card">
+      <span>Scatter</span>
+      <strong>Free Spins Trigger</strong>
+      <p>Scatters can land anywhere on the board and trigger the bonus game.</p>
+    </div>
+
+    <div className="rule-card">
+      <span>Free Spins</span>
+      <strong>Wins x2</strong>
+      <p>All wins during Free Spins are paid with a x2 win multiplier.</p>
+    </div>
+  </div>
+
+  <div className="scatter-awards">
+    <h4>Scatter Awards</h4>
+
+    <div className="scatter-awards-grid">
+      <div>
+        <span>3 Scatters</span>
+        <strong>8 Free Spins</strong>
+      </div>
+
+      <div>
+        <span>4 Scatters</span>
+        <strong>12 Free Spins</strong>
+      </div>
+
+      <div>
+        <span>5+ Scatters</span>
+        <strong>20 Free Spins</strong>
+      </div>
+    </div>
+  </div>
+
+  <div className="bonus-buy-rules">
+    <span>Bonus Buy</span>
+    <strong>15x Bet</strong>
+    <p>Buy Bonus instantly starts 8 Free Spins. Estimated Buy Bonus RTP is around 93%.</p>
+  </div>
+
+  <p className="paytable-note">
+    Pays are shown as bet multipliers. RTP is an estimated simulation value and can vary
+    during short sessions.
+  </p>
+</div>
           </section>
         </div>
       )}

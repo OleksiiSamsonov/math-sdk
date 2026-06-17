@@ -2238,3 +2238,126 @@ h1 {
   opacity: 0.45;
   filter: grayscale(0.35);
 }
+.rules-section {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.rules-section h3 {
+  margin: 0;
+  color: #ffe59b;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rule-card {
+  padding: 14px;
+  border: 1px solid rgba(255, 218, 121, 0.14);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 218, 121, 0.08), transparent 55%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.rule-card span,
+.bonus-buy-rules span {
+  display: block;
+  color: rgba(255, 229, 155, 0.72);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rule-card strong,
+.bonus-buy-rules strong {
+  display: block;
+  margin-top: 5px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 950;
+}
+
+.rule-card p,
+.bonus-buy-rules p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.scatter-awards {
+  padding: 16px;
+  border: 1px solid rgba(126, 231, 135, 0.18);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top, rgba(126, 231, 135, 0.1), transparent 55%),
+    rgba(126, 231, 135, 0.035);
+}
+
+.scatter-awards h4 {
+  margin: 0 0 12px;
+  color: #baffc1;
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.scatter-awards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.scatter-awards-grid div {
+  padding: 12px 10px;
+  border: 1px solid rgba(126, 231, 135, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+  text-align: center;
+}
+
+.scatter-awards-grid span {
+  display: block;
+  color: rgba(220, 255, 224, 0.62);
+  font-size: 10px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.scatter-awards-grid strong {
+  display: block;
+  margin-top: 5px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.bonus-buy-rules {
+  padding: 16px;
+  border: 1px solid rgba(255, 218, 121, 0.22);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 218, 121, 0.12), transparent 55%),
+    rgba(255, 218, 121, 0.035);
+}
+
+@media (max-width: 720px) {
+  .rules-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scatter-awards-grid {
+    grid-template-columns: 1fr;
+  }
+}
