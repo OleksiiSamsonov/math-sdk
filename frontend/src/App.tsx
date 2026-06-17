@@ -151,6 +151,45 @@ function playBonusSound(isSoundEnabled: boolean) {
   window.setTimeout(() => playTone(isSoundEnabled, 780, 190, 0.06, "triangle"), 260);
 }
 
+function getBonusCompleteTitle(bonusWin: number): string {
+  if (bonusWin >= 250) {
+    return "Epic Bonus";
+  }
+
+  if (bonusWin >= 100) {
+    return "Massive Bonus";
+  }
+
+  if (bonusWin >= 50) {
+    return "Great Bonus";
+  }
+
+  if (bonusWin >= 10) {
+    return "Nice Bonus";
+  }
+
+  return "Bonus Complete";
+}
+
+function getBonusCompleteSubtitle(bonusWin: number): string {
+  if (bonusWin >= 250) {
+    return "Huge free spins result. That was a rare bonus hit.";
+  }
+
+  if (bonusWin >= 100) {
+    return "Massive free spins payout. Strong bonus round.";
+  }
+
+  if (bonusWin >= 50) {
+    return "Great free spins result. Bonus paid well.";
+  }
+
+  if (bonusWin >= 10) {
+    return "Nice bonus result. Returning to base game.";
+  }
+
+  return "Total Free Spins win. Returning to base game.";
+}
 export default function App() {
   const [board, setBoard] = useState<SymbolCode[][]>(DEFAULT_BOARD);
   const [bet, setBet] = useState(1);
@@ -254,6 +293,8 @@ export default function App() {
 const sessionRtp =
   sessionTotalBet > 0 ? Number(((sessionTotalWin / sessionTotalBet) * 100).toFixed(2)) : 0;
   const bonusBuyCost = Number((bet * 15).toFixed(2));
+  const bonusCompleteTitle = getBonusCompleteTitle(bonusTotalWin);
+const bonusCompleteSubtitle = getBonusCompleteSubtitle(bonusTotalWin);
 
   const isBigWin = lastMultiplier >= 10 && lastWin > 0 && !isSpinning;
   const isMegaWin = lastMultiplier >= 25 && lastWin > 0 && !isSpinning;
@@ -1127,18 +1168,28 @@ const isReelSpinning = isSpinning && !isReelStopped;
 )}
 {showBonusComplete && (
   <div className="bonus-complete-overlay">
-    <div className="bonus-complete-card">
+    <div
+  className={`bonus-complete-card ${
+    bonusTotalWin >= 250
+      ? "bonus-complete-epic"
+      : bonusTotalWin >= 100
+        ? "bonus-complete-massive"
+        : bonusTotalWin >= 50
+          ? "bonus-complete-great"
+          : bonusTotalWin >= 10
+            ? "bonus-complete-nice"
+            : ""
+  }`}
+>
       <div className="bonus-complete-glow" />
 
-      <span className="bonus-complete-label">Bonus Complete</span>
+      <span className="bonus-complete-label">{bonusCompleteTitle}</span>
 
-      <strong className="bonus-complete-title">
-        {bonusTotalWin.toFixed(2)}
-      </strong>
+<strong className="bonus-complete-title">
+  {bonusTotalWin.toFixed(2)}
+</strong>
 
-      <p className="bonus-complete-text">
-        Total Free Spins win. Returning to base game.
-      </p>
+<p className="bonus-complete-text">{bonusCompleteSubtitle}</p>
 
       <div className="bonus-complete-stats">
         <div>

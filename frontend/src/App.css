@@ -2507,3 +2507,53 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+.bonus-complete-nice {
+  border-color: rgba(126, 231, 135, 0.5);
+  box-shadow:
+    0 0 55px rgba(126, 231, 135, 0.22),
+    inset 0 0 24px rgba(255, 255, 255, 0.07);
+}
+
+.bonus-complete-great {
+  border-color: rgba(255, 218, 121, 0.62);
+  box-shadow:
+    0 0 65px rgba(255, 218, 121, 0.3),
+    inset 0 0 26px rgba(255, 255, 255, 0.08);
+}
+
+.bonus-complete-massive {
+  border-color: rgba(255, 142, 66, 0.72);
+  background:
+    radial-gradient(circle at top, rgba(255, 142, 66, 0.22), transparent 44%),
+    linear-gradient(145deg, rgba(117, 46, 16, 0.94), rgba(8, 12, 20, 0.97));
+  box-shadow:
+    0 0 75px rgba(255, 142, 66, 0.36),
+    inset 0 0 28px rgba(255, 255, 255, 0.09);
+}
+
+.bonus-complete-epic {
+  border-color: rgba(255, 83, 167, 0.82);
+  background:
+    radial-gradient(circle at top, rgba(255, 83, 167, 0.26), transparent 44%),
+    radial-gradient(circle at bottom, rgba(126, 231, 135, 0.14), transparent 48%),
+    linear-gradient(145deg, rgba(90, 18, 67, 0.95), rgba(8, 12, 20, 0.98));
+  box-shadow:
+    0 0 90px rgba(255, 83, 167, 0.42),
+    0 0 45px rgba(126, 231, 135, 0.18),
+    inset 0 0 32px rgba(255, 255, 255, 0.1);
+}
+
+.bonus-complete-epic .bonus-complete-label,
+.bonus-complete-massive .bonus-complete-label {
+  color: #ffffff;
+  text-shadow:
+    0 0 12px rgba(255, 255, 255, 0.6),
+    0 0 26px rgba(255, 83, 167, 0.55);
+}
+
+.bonus-complete-epic .bonus-complete-title {
+  text-shadow:
+    0 0 16px rgba(255, 255, 255, 0.8),
+    0 0 36px rgba(255, 83, 167, 0.75),
+    0 0 54px rgba(126, 231, 135, 0.32);
+}
