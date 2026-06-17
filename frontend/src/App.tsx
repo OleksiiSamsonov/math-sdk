@@ -21,6 +21,41 @@ function wait(ms: number): Promise<void> {
     window.setTimeout(resolve, ms);
   });
 }
+function createBuyBonusBoard(): SymbolCode[][] {
+  const board = createRandomBoard();
+
+  const replacementSymbols: SymbolCode[] = [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "W",
+  ];
+
+  const getReplacementSymbol = (rowIndex: number, reelIndex: number): SymbolCode => {
+    const replacementIndex = (rowIndex * 5 + reelIndex) % replacementSymbols.length;
+    return replacementSymbols[replacementIndex];
+  };
+
+  for (let rowIndex = 0; rowIndex < board.length; rowIndex += 1) {
+    for (let reelIndex = 0; reelIndex < board[rowIndex].length; reelIndex += 1) {
+      if (board[rowIndex][reelIndex] === "S") {
+        board[rowIndex][reelIndex] = getReplacementSymbol(rowIndex, reelIndex);
+      }
+    }
+  }
+
+  board[0][1] = "S";
+  board[1][2] = "S";
+  board[2][3] = "S";
+
+  return board;
+}
 
 function playTone(
   isSoundEnabled: boolean,
@@ -367,7 +402,7 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
 setSessionTotalWin(0);
   }
 
-  function handleBuyBonus() {
+  async function handleBuyBonus() {
   if (isSpinning || isFreeSpinMode || showBonusIntro || showBonusComplete) {
     return;
   }
@@ -385,15 +420,70 @@ setSessionTotalWin(0);
   setLastMultiplier(0);
   setWinningLines([]);
   setWinningCells(new Set());
+  setLastFreeSpinsAwarded(0);
 
   setBalance((currentBalance) => Number((currentBalance - bonusBuyCost).toFixed(2)));
   setSessionTotalBet((currentSessionTotalBet) =>
     Number((currentSessionTotalBet + bonusBuyCost).toFixed(2))
   );
 
+  const finalBoard = createBuyBonusBoard();
+  const stoppedReelIndexes = new Set<number>();
+
+  const reelSpinIntervalMs = isTurboMode ? 32 : 55;
+  const reelStopDelayMs = isTurboMode ? 90 : 260;
+  const finalSettleDelayMs = isTurboMode ? 60 : 180;
+
+  setIsSpinning(true);
+  setStoppedReels(new Set());
+  playSpinSound(isSoundEnabled);
+
+  const animationInterval = window.setInterval(() => {
+    const randomBoard = createRandomBoard();
+
+    setBoard((currentBoard) =>
+      currentBoard.map((row, rowIndex) =>
+        row.map((symbolCode, reelIndex) => {
+          if (stoppedReelIndexes.has(reelIndex)) {
+            return finalBoard[rowIndex][reelIndex];
+          }
+
+          return randomBoard[rowIndex][reelIndex] ?? symbolCode;
+        })
+      )
+    );
+  }, reelSpinIntervalMs);
+
+  for (let reelIndex = 0; reelIndex < 5; reelIndex += 1) {
+    await wait(reelStopDelayMs);
+
+    stoppedReelIndexes.add(reelIndex);
+    setStoppedReels(new Set(stoppedReelIndexes));
+    playReelStopSound(isSoundEnabled, reelIndex);
+
+    setBoard((currentBoard) =>
+      currentBoard.map((row, rowIndex) =>
+        row.map((symbolCode, currentReelIndex) => {
+          if (currentReelIndex === reelIndex) {
+            return finalBoard[rowIndex][currentReelIndex];
+          }
+
+          return symbolCode;
+        })
+      )
+    );
+  }
+
+  await wait(finalSettleDelayMs);
+
+  window.clearInterval(animationInterval);
+
+  setBoard(finalBoard);
   setFreeSpinsLeft(8);
   setLastFreeSpinsAwarded(8);
   setShowBonusIntro(true);
+  setIsSpinning(false);
+  setStoppedReels(new Set());
   playBonusSound(isSoundEnabled);
 }
   function handleForceBonus() {
@@ -531,7 +621,7 @@ useEffect(() => {
           </div>
           <button
   className="buy-bonus-button"
-  onClick={handleBuyBonus}
+onClick={() => void handleBuyBonus()}
   disabled={isSpinning || isFreeSpinMode || showBonusIntro || showBonusComplete}
 >
   <span>Buy Bonus</span>
