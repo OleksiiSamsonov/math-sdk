@@ -2410,3 +2410,100 @@ h1 {
     transform: scale(1.08);
   }
 }
+.anticipation-mode {
+  border-color: rgba(255, 218, 121, 0.7);
+  box-shadow:
+    0 0 0 2px rgba(255, 218, 121, 0.26),
+    0 0 58px rgba(255, 218, 121, 0.34),
+    inset 0 0 28px rgba(255, 218, 121, 0.09);
+  animation: anticipationPulse 0.32s ease-in-out infinite;
+}
+
+.anticipation-mode::before {
+  content: "BONUS CHANCE";
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  z-index: 5;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 218, 121, 0.42);
+  border-radius: 999px;
+  background: rgba(18, 12, 7, 0.92);
+  color: #ffe59b;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow: 0 0 20px rgba(255, 218, 121, 0.22);
+}
+
+@keyframes anticipationPulse {
+  0%,
+  100% {
+    transform: translateX(0);
+    filter: brightness(1);
+  }
+
+  25% {
+    transform: translateX(-1px);
+  }
+
+  50% {
+    transform: translateX(1px);
+    filter: brightness(1.08);
+  }
+
+  75% {
+    transform: translateX(-1px);
+  }
+}
+.free-spins-live-panel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid rgba(126, 231, 135, 0.42);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at center, rgba(126, 231, 135, 0.14), transparent 62%),
+    linear-gradient(135deg, rgba(22, 87, 47, 0.3), rgba(10, 16, 24, 0.9));
+  box-shadow:
+    0 0 24px rgba(126, 231, 135, 0.16),
+    inset 0 0 14px rgba(255, 255, 255, 0.05);
+}
+
+.free-spins-live-panel div {
+  padding: 10px 8px;
+  border: 1px solid rgba(126, 231, 135, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+  text-align: center;
+}
+
+.free-spins-live-panel span {
+  display: block;
+  color: rgba(220, 255, 224, 0.68);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.free-spins-live-panel strong {
+  display: block;
+  margin-top: 5px;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 950;
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.42),
+    0 0 18px rgba(126, 231, 135, 0.42);
+}
+
+@media (max-width: 720px) {
+  .free-spins-live-panel {
+    grid-template-columns: 1fr;
+  }
+}

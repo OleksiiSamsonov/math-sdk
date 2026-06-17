@@ -56,6 +56,28 @@ function createBuyBonusBoard(): SymbolCode[][] {
 
   return board;
 }
+function countScattersOnStoppedReels(
+  board: SymbolCode[][],
+  stoppedReelIndexes: Set<number>
+): number {
+  return board.reduce((scatterCount, row) => {
+    const scattersInRow = row.filter(
+      (symbolCode, reelIndex) => stoppedReelIndexes.has(reelIndex) && symbolCode === "S"
+    ).length;
+
+    return scatterCount + scattersInRow;
+  }, 0);
+}
+function shouldUseAnticipation(
+  board: SymbolCode[][],
+  stoppedReelIndexes: Set<number>,
+  nextReelIndex: number
+): boolean {
+  const stoppedScatterCount = countScattersOnStoppedReels(board, stoppedReelIndexes);
+  const hasMoreReelsToStop = nextReelIndex < 5;
+
+  return stoppedScatterCount >= 2 && hasMoreReelsToStop;
+}
 
 function playTone(
   isSoundEnabled: boolean,
@@ -156,6 +178,7 @@ export default function App() {
   const [sessionTotalBet, setSessionTotalBet] = useState(0);
   const [sessionTotalWin, setSessionTotalWin] = useState(0);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [isAnticipationActive, setIsAnticipationActive] = useState(false);
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
@@ -224,9 +247,11 @@ const sessionRtp =
     setLastMultiplier(0);
     setWinningLines([]);
     setWinningCells(new Set());
+    setIsAnticipationActive(false);
     const reelSpinIntervalMs = isTurboMode ? 32 : 55;
-    const reelStopDelayMs = isTurboMode ? 90 : 260;
-    const finalSettleDelayMs = isTurboMode ? 60 : 180;
+const reelStopDelayMs = isTurboMode ? 90 : 260;
+const anticipationDelayMs = isTurboMode ? 420 : 1250;
+const finalSettleDelayMs = isTurboMode ? 60 : 180;
 
     const response = await requestSpin({
       bet,
@@ -261,24 +286,38 @@ const sessionRtp =
     }, reelSpinIntervalMs);
 
     for (let reelIndex = 0; reelIndex < 5; reelIndex += 1) {
-      await wait(reelStopDelayMs);
+  const shouldAnticipateBeforeStop = shouldUseAnticipation(
+    finalBoard,
+    stoppedReelIndexes,
+    reelIndex
+  );
 
-      stoppedReelIndexes.add(reelIndex);
-      setStoppedReels(new Set(stoppedReelIndexes));
-      playReelStopSound(isSoundEnabled, reelIndex);
+  if (shouldAnticipateBeforeStop) {
+    setIsAnticipationActive(true);
+    await wait(anticipationDelayMs);
+  } else {
+    await wait(reelStopDelayMs);
+  }
 
-      setBoard((currentBoard) =>
-        currentBoard.map((row, rowIndex) =>
-          row.map((symbolCode, currentReelIndex) => {
-            if (currentReelIndex === reelIndex) {
-              return finalBoard[rowIndex][currentReelIndex];
-            }
+  stoppedReelIndexes.add(reelIndex);
+  setStoppedReels(new Set(stoppedReelIndexes));
+  playReelStopSound(isSoundEnabled, reelIndex);
 
-            return symbolCode;
-          })
-        )
-      );
-    }
+  setBoard((currentBoard) =>
+    currentBoard.map((row, rowIndex) =>
+      row.map((symbolCode, currentReelIndex) => {
+        if (currentReelIndex === reelIndex) {
+          return finalBoard[rowIndex][currentReelIndex];
+        }
+
+        return symbolCode;
+      })
+    )
+  );
+
+  const stoppedScatterCount = countScattersOnStoppedReels(finalBoard, stoppedReelIndexes);
+  setIsAnticipationActive(stoppedScatterCount >= 2 && reelIndex < 4);
+}
 
     await wait(finalSettleDelayMs);
 
@@ -365,6 +404,7 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
 
     setIsSpinning(false);
     setStoppedReels(new Set());
+    setIsAnticipationActive(false);
   }
 
   function handleBetChange(nextBet: number) {
@@ -400,6 +440,7 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
     setAutoplayLeft(0);
     setSessionTotalBet(0);
 setSessionTotalWin(0);
+setIsAnticipationActive(false);
   }
 
   async function handleBuyBonus() {
@@ -421,6 +462,7 @@ setSessionTotalWin(0);
   setWinningLines([]);
   setWinningCells(new Set());
   setLastFreeSpinsAwarded(0);
+  setIsAnticipationActive(false);
 
   setBalance((currentBalance) => Number((currentBalance - bonusBuyCost).toFixed(2)));
   setSessionTotalBet((currentSessionTotalBet) =>
@@ -431,8 +473,9 @@ setSessionTotalWin(0);
   const stoppedReelIndexes = new Set<number>();
 
   const reelSpinIntervalMs = isTurboMode ? 32 : 55;
-  const reelStopDelayMs = isTurboMode ? 90 : 260;
-  const finalSettleDelayMs = isTurboMode ? 60 : 180;
+const reelStopDelayMs = isTurboMode ? 90 : 260;
+const anticipationDelayMs = isTurboMode ? 420 : 1250;
+const finalSettleDelayMs = isTurboMode ? 60 : 180;
 
   setIsSpinning(true);
   setStoppedReels(new Set());
@@ -455,24 +498,38 @@ setSessionTotalWin(0);
   }, reelSpinIntervalMs);
 
   for (let reelIndex = 0; reelIndex < 5; reelIndex += 1) {
+  const shouldAnticipateBeforeStop = shouldUseAnticipation(
+    finalBoard,
+    stoppedReelIndexes,
+    reelIndex
+  );
+
+  if (shouldAnticipateBeforeStop) {
+    setIsAnticipationActive(true);
+    await wait(anticipationDelayMs);
+  } else {
     await wait(reelStopDelayMs);
-
-    stoppedReelIndexes.add(reelIndex);
-    setStoppedReels(new Set(stoppedReelIndexes));
-    playReelStopSound(isSoundEnabled, reelIndex);
-
-    setBoard((currentBoard) =>
-      currentBoard.map((row, rowIndex) =>
-        row.map((symbolCode, currentReelIndex) => {
-          if (currentReelIndex === reelIndex) {
-            return finalBoard[rowIndex][currentReelIndex];
-          }
-
-          return symbolCode;
-        })
-      )
-    );
   }
+
+  stoppedReelIndexes.add(reelIndex);
+  setStoppedReels(new Set(stoppedReelIndexes));
+  playReelStopSound(isSoundEnabled, reelIndex);
+
+  setBoard((currentBoard) =>
+    currentBoard.map((row, rowIndex) =>
+      row.map((symbolCode, currentReelIndex) => {
+        if (currentReelIndex === reelIndex) {
+          return finalBoard[rowIndex][currentReelIndex];
+        }
+
+        return symbolCode;
+      })
+    )
+  );
+
+  const stoppedScatterCount = countScattersOnStoppedReels(finalBoard, stoppedReelIndexes);
+  setIsAnticipationActive(stoppedScatterCount >= 2 && reelIndex < 4);
+}
 
   await wait(finalSettleDelayMs);
 
@@ -483,8 +540,9 @@ setSessionTotalWin(0);
   setLastFreeSpinsAwarded(8);
   setShowBonusIntro(true);
   setIsSpinning(false);
-  setStoppedReels(new Set());
-  playBonusSound(isSoundEnabled);
+setStoppedReels(new Set());
+setIsAnticipationActive(false);
+playBonusSound(isSoundEnabled);
 }
   function handleForceBonus() {
     if (isSpinning) {
@@ -689,7 +747,11 @@ onClick={() => void handleBuyBonus()}
 )}
         </aside>
 
-        <section className={`slot-machine ${isFreeSpinMode ? "free-spins-mode" : ""}`}>
+        <section
+  className={`slot-machine ${isFreeSpinMode ? "free-spins-mode" : ""} ${
+    isAnticipationActive ? "anticipation-mode" : ""
+  }`}
+>
           <div className="slot-header">
             <div>
               <span>20 Fixed Paylines</span>
@@ -717,10 +779,21 @@ onClick={() => void handleBuyBonus()}
           )}
 
           {isFreeSpinMode && (
-  <div className="free-spins-compact-bar">
-    <span>Free Spins Mode</span>
-    <strong>{safeFreeSpinsLeft} left</strong>
-    <small>Wins x2</small>
+  <div className="free-spins-live-panel">
+    <div>
+      <span>Free Spins</span>
+      <strong>{safeFreeSpinsLeft} Left</strong>
+    </div>
+
+    <div>
+      <span>Bonus Win</span>
+      <strong>{bonusTotalWin.toFixed(2)}</strong>
+    </div>
+
+    <div>
+      <span>Multiplier</span>
+      <strong>x2 Wins</strong>
+    </div>
   </div>
 )}
 
