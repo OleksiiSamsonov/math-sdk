@@ -40,6 +40,7 @@ export default function App() {
   const [showDevPanel, setShowDevPanel] = useState(false);
   const [autoplayLeft, setAutoplayLeft] = useState(0);
   const [isAutoplayActive, setIsAutoplayActive] = useState(false);
+  const [isTurboMode, setIsTurboMode] = useState(false);
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
@@ -103,6 +104,9 @@ export default function App() {
     setLastMultiplier(0);
     setWinningLines([]);
     setWinningCells(new Set());
+    const reelSpinIntervalMs = isTurboMode ? 32 : 55;
+    const reelStopDelayMs = isTurboMode ? 90 : 260;
+    const finalSettleDelayMs = isTurboMode ? 60 : 180;
 
     const response = await requestSpin({
       bet,
@@ -134,10 +138,10 @@ export default function App() {
           })
         )
       );
-    }, 55);
+    }, reelSpinIntervalMs);
 
     for (let reelIndex = 0; reelIndex < 5; reelIndex += 1) {
-      await wait(260);
+      await wait(reelStopDelayMs);
 
       stoppedReelIndexes.add(reelIndex);
       setStoppedReels(new Set(stoppedReelIndexes));
@@ -155,7 +159,7 @@ export default function App() {
       );
     }
 
-    await wait(180);
+    await wait(finalSettleDelayMs);
 
     window.clearInterval(animationInterval);
 
@@ -326,7 +330,7 @@ useEffect(() => {
     }
 
     void handleSpin(true);
-  }, isFreeSpinMode ? 650 : 900);
+  }, isTurboMode ? 260 : isFreeSpinMode ? 650 : 900);
 
   return () => {
     window.clearTimeout(autoplayTimer);
@@ -338,6 +342,7 @@ useEffect(() => {
   showBonusIntro,
   showBonusComplete,
   isFreeSpinMode,
+  isTurboMode,
   balance,
   bet,
 ]);
@@ -501,6 +506,13 @@ useEffect(() => {
                   ? `Free Spin (${safeFreeSpinsLeft})`
                   : "Spin"}
             </button>
+            <button
+  className={`turbo-toggle-button ${isTurboMode ? "turbo-toggle-active" : ""}`}
+  onClick={() => setIsTurboMode((value) => !value)}
+  disabled={isSpinning}
+>
+  {isTurboMode ? "Turbo On" : "Turbo Off"}
+</button>
             <div className="autoplay-box">
   {isAutoplayActive ? (
     <>
