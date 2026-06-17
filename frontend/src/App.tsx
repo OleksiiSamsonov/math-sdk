@@ -171,6 +171,7 @@ export default function App() {
   const [showBonusIntro, setShowBonusIntro] = useState(false);
   const [showBonusComplete, setShowBonusComplete] = useState(false);
   const [bonusTotalWin, setBonusTotalWin] = useState(0);
+  const [displayedBonusTotalWin, setDisplayedBonusTotalWin] = useState(0);
   const [showDevPanel, setShowDevPanel] = useState(false);
   const [autoplayLeft, setAutoplayLeft] = useState(0);
   const [isAutoplayActive, setIsAutoplayActive] = useState(false);
@@ -213,6 +214,40 @@ export default function App() {
     };
   }, [lastWin, lastMultiplier, isSpinning]);
 
+  useEffect(() => {
+  if (bonusTotalWin <= 0) {
+    setDisplayedBonusTotalWin(0);
+    return;
+  }
+
+  const startValue = displayedBonusTotalWin;
+  const endValue = bonusTotalWin;
+  const duration = 650;
+  const startTime = window.performance.now();
+  let animationFrame = 0;
+
+  function animate(currentTime: number) {
+    const progress = Math.min((currentTime - startTime) / duration, 1);
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+    const nextValue = Number(
+      (startValue + (endValue - startValue) * easedProgress).toFixed(2)
+    );
+
+    setDisplayedBonusTotalWin(nextValue);
+
+    if (progress < 1) {
+      animationFrame = window.requestAnimationFrame(animate);
+    } else {
+      setDisplayedBonusTotalWin(endValue);
+    }
+  }
+
+  animationFrame = window.requestAnimationFrame(animate);
+
+  return () => {
+    window.cancelAnimationFrame(animationFrame);
+  };
+}, [bonusTotalWin, displayedBonusTotalWin]);
   const isFreeSpinMode = freeSpinsLeft > 0;
   const safeFreeSpinsLeft = Number.isFinite(freeSpinsLeft) ? freeSpinsLeft : 0;
   const sessionNetProfit = Number((sessionTotalWin - sessionTotalBet).toFixed(2));
@@ -224,13 +259,10 @@ const sessionRtp =
   const isMegaWin = lastMultiplier >= 25 && lastWin > 0 && !isSpinning;
   const winLevelText = isMegaWin ? "MEGA WIN" : "BIG WIN";
 
-  async function handleSpin(isAutoplaySpin = false) {
+  async function handleSpin(_isAutoplaySpin = false) {
     if (isSpinning) {
       return;
     }
-    if (isAutoplayActive && !isAutoplaySpin) {
-  return;
-}
 
     if (!isFreeSpinMode && balance < bet) {
       setApiError("Insufficient balance.");
@@ -436,11 +468,14 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
     setShowBonusIntro(false);
     setShowBonusComplete(false);
     setBonusTotalWin(0);
+    setDisplayedBonusTotalWin(0);
     setIsAutoplayActive(false);
     setAutoplayLeft(0);
     setSessionTotalBet(0);
 setSessionTotalWin(0);
 setIsAnticipationActive(false);
+setIsSpinning(false);
+setStoppedReels(new Set());
   }
 
   async function handleBuyBonus() {
@@ -456,6 +491,7 @@ setIsAnticipationActive(false);
   setApiError("");
   setShowBonusComplete(false);
   setBonusTotalWin(0);
+  setDisplayedBonusTotalWin(0);
   setLastWin(0);
   setDisplayedWin(0);
   setLastMultiplier(0);
@@ -552,6 +588,7 @@ playBonusSound(isSoundEnabled);
     setApiError("");
     setShowBonusComplete(false);
     setBonusTotalWin(0);
+    setDisplayedBonusTotalWin(0);
     setFreeSpinsLeft((currentFreeSpinsLeft) => {
       const safeCurrentFreeSpinsLeft = Number.isFinite(currentFreeSpinsLeft)
         ? currentFreeSpinsLeft
@@ -787,7 +824,7 @@ onClick={() => void handleBuyBonus()}
 
     <div>
       <span>Bonus Win</span>
-      <strong>{bonusTotalWin.toFixed(2)}</strong>
+      <strong>{displayedBonusTotalWin.toFixed(2)}</strong>
     </div>
 
     <div>
@@ -840,7 +877,7 @@ const isReelSpinning = isSpinning && !isReelStopped;
             <button
   className={`spin-button ${isFreeSpinMode ? "free-spin-button" : ""}`}
   onClick={() => void handleSpin(false)}
-  disabled={isSpinning || isAutoplayActive}
+  disabled={isSpinning || showBonusIntro || showBonusComplete}
 >
               {isSpinning
                 ? "Spinning..."
