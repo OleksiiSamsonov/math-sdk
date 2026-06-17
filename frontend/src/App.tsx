@@ -38,6 +38,8 @@ export default function App() {
   const [showBonusComplete, setShowBonusComplete] = useState(false);
   const [bonusTotalWin, setBonusTotalWin] = useState(0);
   const [showDevPanel, setShowDevPanel] = useState(false);
+  const [autoplayLeft, setAutoplayLeft] = useState(0);
+  const [isAutoplayActive, setIsAutoplayActive] = useState(false);
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
@@ -79,10 +81,13 @@ export default function App() {
   const isMegaWin = lastMultiplier >= 25 && lastWin > 0 && !isSpinning;
   const winLevelText = isMegaWin ? "MEGA WIN" : "BIG WIN";
 
-  async function handleSpin() {
+  async function handleSpin(isAutoplaySpin = false) {
     if (isSpinning) {
       return;
     }
+    if (isAutoplayActive && !isAutoplaySpin) {
+  return;
+}
 
     if (!isFreeSpinMode && balance < bet) {
       setApiError("Insufficient balance.");
@@ -252,6 +257,8 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
     setShowBonusIntro(false);
     setShowBonusComplete(false);
     setBonusTotalWin(0);
+    setIsAutoplayActive(false);
+    setAutoplayLeft(0);
   }
 
   function handleForceBonus() {
@@ -272,6 +279,68 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
     setLastFreeSpinsAwarded(8);
     setShowBonusIntro(true);
   }
+  function handleStartAutoplay(spins: number) {
+  if (isSpinning) {
+    return;
+  }
+
+  if (!isFreeSpinMode && balance < bet) {
+    setApiError("Insufficient balance.");
+    return;
+  }
+
+  setApiError("");
+  setAutoplayLeft(spins);
+  setIsAutoplayActive(true);
+}
+
+function handleStopAutoplay() {
+  setIsAutoplayActive(false);
+  setAutoplayLeft(0);
+}
+useEffect(() => {
+  if (!isAutoplayActive) {
+    return;
+  }
+
+  if (isSpinning || showBonusIntro || showBonusComplete) {
+    return;
+  }
+
+  if (!isFreeSpinMode && autoplayLeft <= 0) {
+    setIsAutoplayActive(false);
+    setAutoplayLeft(0);
+    return;
+  }
+
+  if (!isFreeSpinMode && balance < bet) {
+    setApiError("Autoplay stopped: insufficient balance.");
+    setIsAutoplayActive(false);
+    setAutoplayLeft(0);
+    return;
+  }
+
+  const autoplayTimer = window.setTimeout(() => {
+    if (!isFreeSpinMode) {
+      setAutoplayLeft((currentAutoplayLeft) => Math.max(currentAutoplayLeft - 1, 0));
+    }
+
+    void handleSpin(true);
+  }, isFreeSpinMode ? 650 : 900);
+
+  return () => {
+    window.clearTimeout(autoplayTimer);
+  };
+}, [
+  isAutoplayActive,
+  autoplayLeft,
+  isSpinning,
+  showBonusIntro,
+  showBonusComplete,
+  isFreeSpinMode,
+  balance,
+  bet,
+]);
 
   return (
     <main className="app-shell">
@@ -422,16 +491,46 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
             </div>
 
             <button
-              className={`spin-button ${isFreeSpinMode ? "free-spin-button" : ""}`}
-              onClick={handleSpin}
-              disabled={isSpinning}
-            >
+  className={`spin-button ${isFreeSpinMode ? "free-spin-button" : ""}`}
+  onClick={() => void handleSpin(false)}
+  disabled={isSpinning || isAutoplayActive}
+>
               {isSpinning
                 ? "Spinning..."
                 : isFreeSpinMode
                   ? `Free Spin (${safeFreeSpinsLeft})`
                   : "Spin"}
             </button>
+            <div className="autoplay-box">
+  {isAutoplayActive ? (
+    <>
+      <div className="autoplay-status">
+        <span>Autoplay Running</span>
+        <strong>{autoplayLeft} base spins left</strong>
+      </div>
+
+      <button className="autoplay-stop-button" onClick={handleStopAutoplay}>
+        Stop Autoplay
+      </button>
+    </>
+  ) : (
+    <>
+      <span className="autoplay-label">Autoplay</span>
+
+      <div className="autoplay-buttons">
+        {[10, 25, 50].map((spins) => (
+          <button
+            key={spins}
+            onClick={() => handleStartAutoplay(spins)}
+            disabled={isSpinning || showBonusIntro || showBonusComplete}
+          >
+            {spins}
+          </button>
+        ))}
+      </div>
+    </>
+  )}
+</div>
           </div>
 
           <div className="result-strip">
