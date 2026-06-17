@@ -2175,3 +2175,16 @@ h1 {
 .session-stats-row.negative strong {
   color: #ffb3b3;
 }
+.sound-toggle-button {
+  border-color: rgba(255, 255, 255, 0.14);
+  opacity: 0.78;
+}
+
+.sound-toggle-active {
+  border-color: rgba(126, 231, 135, 0.34);
+  background:
+    radial-gradient(circle at top right, rgba(126, 231, 135, 0.13), transparent 52%),
+    rgba(126, 231, 135, 0.06);
+  color: #c7ffcf;
+  opacity: 1;
+}
