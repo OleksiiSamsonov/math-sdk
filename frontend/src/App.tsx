@@ -10,11 +10,88 @@ import {
   type SymbolCode,
 } from "./gameEngine";
 import { requestSpin } from "./mockApi";
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+}
 
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => {
     window.setTimeout(resolve, ms);
   });
+}
+
+function playTone(
+  isSoundEnabled: boolean,
+  frequency: number,
+  durationMs: number,
+  volume = 0.06,
+  type: OscillatorType = "sine"
+) {
+  if (!isSoundEnabled) {
+    return;
+  }
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+  if (!AudioContextClass) {
+    return;
+  }
+
+  const audioContext = new AudioContextClass();
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+
+  gainNode.gain.setValueAtTime(0.0001, audioContext.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(volume, audioContext.currentTime + 0.015);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + durationMs / 1000);
+
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime + durationMs / 1000 + 0.02);
+
+  window.setTimeout(() => {
+    void audioContext.close();
+  }, durationMs + 80);
+}
+
+function playSpinSound(isSoundEnabled: boolean) {
+  playTone(isSoundEnabled, 180, 90, 0.035, "sawtooth");
+}
+
+function playReelStopSound(isSoundEnabled: boolean, reelIndex: number) {
+  playTone(isSoundEnabled, 280 + reelIndex * 45, 70, 0.045, "square");
+}
+
+function playWinSound(isSoundEnabled: boolean, multiplier: number) {
+  if (multiplier >= 25) {
+    playTone(isSoundEnabled, 440, 120, 0.05, "triangle");
+    window.setTimeout(() => playTone(isSoundEnabled, 660, 140, 0.05, "triangle"), 110);
+    window.setTimeout(() => playTone(isSoundEnabled, 880, 180, 0.055, "triangle"), 230);
+    return;
+  }
+
+  if (multiplier >= 10) {
+    playTone(isSoundEnabled, 420, 100, 0.045, "triangle");
+    window.setTimeout(() => playTone(isSoundEnabled, 620, 130, 0.05, "triangle"), 120);
+    return;
+  }
+
+  if (multiplier > 0) {
+    playTone(isSoundEnabled, 520, 110, 0.04, "sine");
+  }
+}
+
+function playBonusSound(isSoundEnabled: boolean) {
+  playTone(isSoundEnabled, 330, 120, 0.05, "triangle");
+  window.setTimeout(() => playTone(isSoundEnabled, 520, 140, 0.055, "triangle"), 120);
+  window.setTimeout(() => playTone(isSoundEnabled, 780, 190, 0.06, "triangle"), 260);
 }
 
 export default function App() {
@@ -43,6 +120,7 @@ export default function App() {
   const [isTurboMode, setIsTurboMode] = useState(false);
   const [sessionTotalBet, setSessionTotalBet] = useState(0);
   const [sessionTotalWin, setSessionTotalWin] = useState(0);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
@@ -102,6 +180,7 @@ const sessionRtp =
 
     setApiError("");
     setLastFreeSpinsAwarded(0);
+    playSpinSound(isSoundEnabled);
     setIsSpinning(true);
     setStoppedReels(new Set());
     setLastWin(0);
@@ -150,6 +229,7 @@ const sessionRtp =
 
       stoppedReelIndexes.add(reelIndex);
       setStoppedReels(new Set(stoppedReelIndexes));
+      playReelStopSound(isSoundEnabled, reelIndex);
 
       setBoard((currentBoard) =>
         currentBoard.map((row, rowIndex) =>
@@ -185,6 +265,7 @@ setSessionTotalWin((currentSessionTotalWin) =>
     setBoard(finalBoard);
     setLastWin(response.result.evaluation.totalWin);
     setLastMultiplier(response.result.evaluation.totalMultiplier);
+    playWinSound(isSoundEnabled, response.result.evaluation.totalMultiplier);
     setWinningLines(response.result.evaluation.winningLines);
     setWinningCells(new Set(response.result.evaluation.winningCells));
     setBalance(
@@ -197,10 +278,13 @@ setSessionTotalWin((currentSessionTotalWin) =>
 if (!isFreeSpinMode && awardedFreeSpins > 0) {
   setBonusTotalWin(0);
   setShowBonusIntro(true);
+  playBonusSound(isSoundEnabled);
+
 }
 
 if (isFreeSpinMode && awardedFreeSpins > 0) {
   setShowBonusIntro(true);
+  playBonusSound(isSoundEnabled);
 }
 
 
@@ -299,6 +383,8 @@ setSessionTotalWin(0);
     });
     setLastFreeSpinsAwarded(8);
     setShowBonusIntro(true);
+    playBonusSound(isSoundEnabled);
+
   }
   function handleStartAutoplay(spins: number) {
   if (isSpinning) {
@@ -440,6 +526,14 @@ useEffect(() => {
   </div>
 </div>
 
+          <button
+  className={`secondary-button sound-toggle-button ${
+    isSoundEnabled ? "sound-toggle-active" : ""
+  }`}
+  onClick={() => setIsSoundEnabled((value) => !value)}
+>
+  {isSoundEnabled ? "Sound On" : "Sound Off"}
+</button>
           <button className="secondary-button" onClick={() => setShowPaytable((value) => !value)}>
             {showPaytable ? "Hide Paytable" : "Show Paytable"}
           </button>
