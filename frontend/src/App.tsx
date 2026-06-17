@@ -160,7 +160,7 @@ export default function App() {
   const sessionNetProfit = Number((sessionTotalWin - sessionTotalBet).toFixed(2));
 const sessionRtp =
   sessionTotalBet > 0 ? Number(((sessionTotalWin / sessionTotalBet) * 100).toFixed(2)) : 0;
-  const bonusBuyCost = Number((bet * 80).toFixed(2));
+  const bonusBuyCost = Number((bet * 15).toFixed(2));
 
   const isBigWin = lastMultiplier >= 10 && lastWin > 0 && !isSpinning;
   const isMegaWin = lastMultiplier >= 25 && lastWin > 0 && !isSpinning;
@@ -536,7 +536,7 @@ useEffect(() => {
 >
   <span>Buy Bonus</span>
   <strong>{bonusBuyCost.toFixed(2)}</strong>
-  <small>80x bet · 8 Free Spins</small>
+  <small>15x bet · 8 Free Spins</small>
 </button>
           <div className="session-stats-card">
   <span className="session-stats-title">Session Stats</span>

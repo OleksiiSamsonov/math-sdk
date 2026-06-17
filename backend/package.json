@@ -7,7 +7,8 @@
     "dev": "tsx src/server.ts",
     "build": "tsc",
     "start": "node dist/backend/src/server.js",
-    "simulate": "tsx src/simulate.ts"
+    "simulate": "tsx src/simulate.ts",
+    "simulate:buy-bonus": "tsx src/simulateBuyBonus.ts"
   },
   "keywords": [],
   "author": "",
