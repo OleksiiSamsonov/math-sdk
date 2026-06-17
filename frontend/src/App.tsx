@@ -41,6 +41,8 @@ export default function App() {
   const [autoplayLeft, setAutoplayLeft] = useState(0);
   const [isAutoplayActive, setIsAutoplayActive] = useState(false);
   const [isTurboMode, setIsTurboMode] = useState(false);
+  const [sessionTotalBet, setSessionTotalBet] = useState(0);
+  const [sessionTotalWin, setSessionTotalWin] = useState(0);
 
   const currentEvaluation = useMemo(() => evaluateBoard(board, bet), [board, bet]);
 
@@ -77,6 +79,9 @@ export default function App() {
 
   const isFreeSpinMode = freeSpinsLeft > 0;
   const safeFreeSpinsLeft = Number.isFinite(freeSpinsLeft) ? freeSpinsLeft : 0;
+  const sessionNetProfit = Number((sessionTotalWin - sessionTotalBet).toFixed(2));
+const sessionRtp =
+  sessionTotalBet > 0 ? Number(((sessionTotalWin / sessionTotalBet) * 100).toFixed(2)) : 0;
 
   const isBigWin = lastMultiplier >= 10 && lastWin > 0 && !isSpinning;
   const isMegaWin = lastMultiplier >= 25 && lastWin > 0 && !isSpinning;
@@ -164,7 +169,18 @@ export default function App() {
     window.clearInterval(animationInterval);
 
     const nextSpinCount = spinCount + 1;
-    const awardedFreeSpins = Number(response.result.evaluation.freeSpinsAwarded ?? 0);
+const awardedFreeSpins = Number(response.result.evaluation.freeSpinsAwarded ?? 0);
+const spinWin = Number(response.result.evaluation.totalWin ?? 0);
+
+if (!isFreeSpinMode) {
+  setSessionTotalBet((currentSessionTotalBet) =>
+    Number((currentSessionTotalBet + bet).toFixed(2))
+  );
+}
+
+setSessionTotalWin((currentSessionTotalWin) =>
+  Number((currentSessionTotalWin + spinWin).toFixed(2))
+);
 
     setBoard(finalBoard);
     setLastWin(response.result.evaluation.totalWin);
@@ -187,7 +203,6 @@ if (isFreeSpinMode && awardedFreeSpins > 0) {
   setShowBonusIntro(true);
 }
 
-    const spinWin = Number(response.result.evaluation.totalWin ?? 0);
 
 if (isFreeSpinMode) {
   setBonusTotalWin((currentBonusTotalWin) =>
@@ -263,6 +278,8 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
     setBonusTotalWin(0);
     setIsAutoplayActive(false);
     setAutoplayLeft(0);
+    setSessionTotalBet(0);
+setSessionTotalWin(0);
   }
 
   function handleForceBonus() {
@@ -396,6 +413,32 @@ useEffect(() => {
             <span>Free Spins Left</span>
             <strong>{safeFreeSpinsLeft}</strong>
           </div>
+          <div className="session-stats-card">
+  <span className="session-stats-title">Session Stats</span>
+
+  <div className="session-stats-row">
+    <span>Total Bet</span>
+    <strong>{sessionTotalBet.toFixed(2)}</strong>
+  </div>
+
+  <div className="session-stats-row">
+    <span>Total Win</span>
+    <strong>{sessionTotalWin.toFixed(2)}</strong>
+  </div>
+
+  <div className={`session-stats-row ${sessionNetProfit >= 0 ? "positive" : "negative"}`}>
+    <span>Net</span>
+    <strong>
+      {sessionNetProfit >= 0 ? "+" : ""}
+      {sessionNetProfit.toFixed(2)}
+    </strong>
+  </div>
+
+  <div className="session-stats-row">
+    <span>RTP</span>
+    <strong>{sessionRtp.toFixed(2)}%</strong>
+  </div>
+</div>
 
           <button className="secondary-button" onClick={() => setShowPaytable((value) => !value)}>
             {showPaytable ? "Hide Paytable" : "Show Paytable"}

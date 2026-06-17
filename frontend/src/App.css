@@ -2128,3 +2128,50 @@ h1 {
   color: #c7ffcf;
   box-shadow: 0 0 20px rgba(126, 231, 135, 0.14);
 }
+.session-stats-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(255, 218, 121, 0.16);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 218, 121, 0.08), transparent 52%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.session-stats-title {
+  color: rgba(255, 229, 155, 0.78);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.session-stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.session-stats-row span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.session-stats-row strong {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.session-stats-row.positive strong {
+  color: #baffc1;
+}
+
+.session-stats-row.negative strong {
+  color: #ffb3b3;
+}
