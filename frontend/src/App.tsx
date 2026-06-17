@@ -160,6 +160,7 @@ export default function App() {
   const sessionNetProfit = Number((sessionTotalWin - sessionTotalBet).toFixed(2));
 const sessionRtp =
   sessionTotalBet > 0 ? Number(((sessionTotalWin / sessionTotalBet) * 100).toFixed(2)) : 0;
+  const bonusBuyCost = Number((bet * 80).toFixed(2));
 
   const isBigWin = lastMultiplier >= 10 && lastWin > 0 && !isSpinning;
   const isMegaWin = lastMultiplier >= 25 && lastWin > 0 && !isSpinning;
@@ -366,6 +367,35 @@ setFreeSpinsLeft((currentFreeSpinsLeft) => {
 setSessionTotalWin(0);
   }
 
+  function handleBuyBonus() {
+  if (isSpinning || isFreeSpinMode || showBonusIntro || showBonusComplete) {
+    return;
+  }
+
+  if (balance < bonusBuyCost) {
+    setApiError("Insufficient balance to buy bonus.");
+    return;
+  }
+
+  setApiError("");
+  setShowBonusComplete(false);
+  setBonusTotalWin(0);
+  setLastWin(0);
+  setDisplayedWin(0);
+  setLastMultiplier(0);
+  setWinningLines([]);
+  setWinningCells(new Set());
+
+  setBalance((currentBalance) => Number((currentBalance - bonusBuyCost).toFixed(2)));
+  setSessionTotalBet((currentSessionTotalBet) =>
+    Number((currentSessionTotalBet + bonusBuyCost).toFixed(2))
+  );
+
+  setFreeSpinsLeft(8);
+  setLastFreeSpinsAwarded(8);
+  setShowBonusIntro(true);
+  playBonusSound(isSoundEnabled);
+}
   function handleForceBonus() {
     if (isSpinning) {
       return;
@@ -499,6 +529,15 @@ useEffect(() => {
             <span>Free Spins Left</span>
             <strong>{safeFreeSpinsLeft}</strong>
           </div>
+          <button
+  className="buy-bonus-button"
+  onClick={handleBuyBonus}
+  disabled={isSpinning || isFreeSpinMode || showBonusIntro || showBonusComplete}
+>
+  <span>Buy Bonus</span>
+  <strong>{bonusBuyCost.toFixed(2)}</strong>
+  <small>80x bet · 8 Free Spins</small>
+</button>
           <div className="session-stats-card">
   <span className="session-stats-title">Session Stats</span>
 

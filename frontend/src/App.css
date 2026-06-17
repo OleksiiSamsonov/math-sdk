@@ -2188,3 +2188,53 @@ h1 {
   color: #c7ffcf;
   opacity: 1;
 }
+.buy-bonus-button {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 15px 14px;
+  border: 1px solid rgba(255, 218, 121, 0.34);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 218, 121, 0.18), transparent 55%),
+    linear-gradient(135deg, rgba(105, 68, 18, 0.5), rgba(18, 12, 7, 0.92));
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow:
+    0 0 22px rgba(255, 218, 121, 0.12),
+    inset 0 0 14px rgba(255, 255, 255, 0.04);
+}
+
+.buy-bonus-button span {
+  color: #ffe59b;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.buy-bonus-button strong {
+  color: #ffffff;
+  font-size: 24px;
+  line-height: 1;
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.4),
+    0 0 18px rgba(255, 218, 121, 0.42);
+}
+
+.buy-bonus-button small {
+  color: rgba(255, 241, 202, 0.68);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.buy-bonus-button:hover {
+  border-color: rgba(255, 218, 121, 0.62);
+  filter: brightness(1.08);
+}
+
+.buy-bonus-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  filter: grayscale(0.35);
+}
