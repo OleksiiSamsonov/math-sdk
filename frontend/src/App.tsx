@@ -640,14 +640,17 @@ useEffect(() => {
                 const symbol = SYMBOLS[symbolCode];
                 const cellKey = `${rowIndex}-${reelIndex}`;
                 const isWinningCell = winningCells.has(cellKey) && !isSpinning;
-                const isReelStopped = stoppedReels.has(reelIndex);
-                const isReelSpinning = isSpinning && !isReelStopped;
+const isBonusScatterCell = symbolCode === "S" && lastFreeSpinsAwarded > 0 && !isSpinning;
+const isReelStopped = stoppedReels.has(reelIndex);
+const isReelSpinning = isSpinning && !isReelStopped;
 
                 return (
                   <div
                     className={`slot-cell ${symbol.type} ${isWinningCell ? "winning-cell" : ""} ${
-                      isReelSpinning ? "reel-spinning-cell" : ""
-                    } ${isReelStopped ? "reel-stopped-cell" : ""}`}
+  isBonusScatterCell ? "bonus-scatter-cell" : ""
+} ${isReelSpinning ? "reel-spinning-cell" : ""} ${
+  isReelStopped ? "reel-stopped-cell" : ""
+}`}
                     key={`${rowIndex}-${reelIndex}`}
                   >
                     <img className="symbol-image" src={symbol.image} alt={symbol.label} />
